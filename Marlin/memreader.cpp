@@ -1,0 +1,52 @@
+/* -*- c++ -*- */
+
+#include "Marlin.h"
+#include "memreader.h"
+#include "stepper.h"
+#include "temperature.h"
+#include "language.h"
+
+MemReader::MemReader()
+{
+   program = 0;
+   pos = 0;
+   isprinting = false;
+}
+
+void MemReader::startMemprint(const uint8_t nr)
+{
+  program = nr;
+  pos = 0;
+  isprinting = true;
+  lcd_ForceStatusScreen(true);
+  lcd_ForceStatusScreen(false);
+}
+
+/* ??? Check se serve */
+void MemReader::getStatus()
+{
+  if(isprinting){
+    SERIAL_PROTOCOLPGM(MSG_SD_PRINTING_BYTE);
+    SERIAL_PROTOCOL(pos);
+    SERIAL_PROTOCOLPGM("/");
+    SERIAL_PROTOCOLLN(ScriptLength[program]);
+  }
+  else{
+    SERIAL_PROTOCOLLNPGM(MSG_SD_NOT_PRINTING);
+  }
+}
+
+void MemReader::printingHasFinished()
+{
+    st_synchronize();
+    quickStop();
+    isprinting = false;
+    /* ???
+    if(SD_FINISHED_STEPPERRELEASE)
+    {
+        //finishAndDisableSteppers();
+        enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
+    }
+    */
+    autotempShutdown();
+}
