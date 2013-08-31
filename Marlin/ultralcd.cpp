@@ -4,6 +4,7 @@
 #include "Marlin.h"
 #include "language.h"
 #include "cardreader.h"
+#include "memreader.h"
 #include "temperature.h"
 #include "stepper.h"
 #include "ConfigurationStore.h"
@@ -49,6 +50,7 @@ static void lcd_control_temperature_preheat_abs_settings_menu();
 static void lcd_control_motion_menu();
 static void lcd_control_retract_menu();
 static void lcd_sdcard_menu();
+static void lcd_utilities_menu();
 
 static void lcd_quick_feedback();//Cause an LCD refresh, and give the user visual or audiable feedback that something has happend
 
@@ -153,6 +155,7 @@ menuFunc_t callbackFunc;
 float raw_Ki, raw_Kd;
 
 /* Main status screen. It's up to the implementation specific part to show what is needed. As this is very display dependend */
+bool lcd_LockStatusScreen=false;
 static void lcd_status_screen()
 {
     if (lcd_status_update_delay)
@@ -165,7 +168,7 @@ static void lcd_status_screen()
         lcd_status_update_delay = 10;   /* redraw the main screen every second. This is easier then trying keep track of all things that change on the screen */
     }
 #ifdef ULTIPANEL
-    if (LCD_CLICKED)
+    if ( (LCD_CLICKED) && !(lcd_LockStatusScreen) )
     {
         currentMenu = lcd_main_menu;
         encoderPosition = 0;
@@ -173,8 +176,8 @@ static void lcd_status_screen()
     }
 
     // Dead zone at 100% feedrate
-    if ((feedmultiply < 100 && (feedmultiply + int(encoderPosition)) > 100) ||
-            (feedmultiply > 100 && (feedmultiply + int(encoderPosition)) < 100))
+    if (feedmultiply < 100 && (feedmultiply + int(encoderPosition)) > 100 ||
+            feedmultiply > 100 && (feedmultiply + int(encoderPosition)) < 100)
     {
         encoderPosition = 0;
         feedmultiply = 100;
@@ -265,6 +268,7 @@ static void lcd_main_menu()
         MENU_ITEM(gcode, MSG_INIT_SDCARD, PSTR("M21")); // Manually initialize the SD-card via user interface
 #endif
     }
+    MENU_ITEM(submenu, "Utilities", lcd_utilities_menu);
 #endif
     END_MENU();
 }
@@ -505,11 +509,9 @@ static void lcd_control_menu()
 
 static void lcd_control_temperature_menu()
 {
-#ifdef PIDTEMP
     // set up temp variables - undo the default scaling
     raw_Ki = unscalePID_i(Ki);
     raw_Kd = unscalePID_d(Kd);
-#endif
 
     START_MENU();
     MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
@@ -662,6 +664,20 @@ void lcd_sdcard_menu()
         }
     }
     END_MENU();
+}
+
+static void lcd_ut_calib()
+{
+  utility.startMemprint(1);
+  lcd_return_to_status();
+}
+
+void lcd_utilities_menu()
+{
+  START_MENU();
+  MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
+  MENU_ITEM(function, "Calib. piano", lcd_ut_calib);
+  END_MENU ();
 }
 
 #define menu_edit_type(_type, _name, _strFunc, scale) \
@@ -1055,6 +1071,16 @@ bool lcd_clicked()
 { 
   return LCD_CLICKED;
 }
+
+void lcd_ForceStatusScreen( bool s )
+{
+  if( s && (currentMenu != lcd_status_screen))
+  {
+    lcd_return_to_status();
+    lcdDrawUpdate = 2;
+  }
+  lcd_LockStatusScreen=s;
+}
 #endif//ULTIPANEL
 
 /********************************/
@@ -1254,20 +1280,16 @@ char *ftostr52(const float &x)
 // grab the pid i value out of the temp variable; scale it; then update the PID driver
 void copy_and_scalePID_i()
 {
-#ifdef PIDTEMP
   Ki = scalePID_i(raw_Ki);
   updatePID();
-#endif
 }
 
 // Callback for after editing PID d value
 // grab the pid d value out of the temp variable; scale it; then update the PID driver
 void copy_and_scalePID_d()
 {
-#ifdef PIDTEMP
   Kd = scalePID_d(raw_Kd);
   updatePID();
-#endif
 }
 
 #endif //ULTRA_LCD

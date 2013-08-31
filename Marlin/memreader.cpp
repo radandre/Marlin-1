@@ -5,6 +5,7 @@
 #include "stepper.h"
 #include "temperature.h"
 #include "language.h"
+#include "ultralcd.h"
 
 MemReader::MemReader()
 {

@@ -36,6 +36,7 @@
     
   void lcd_buzz(long duration,uint16_t freq);
   bool lcd_clicked();
+  void lcd_ForceStatusScreen( bool s );
 
 #else //no lcd
   FORCE_INLINE void lcd_update() {}

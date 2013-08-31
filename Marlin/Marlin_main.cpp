@@ -35,6 +35,7 @@
 #include "temperature.h"
 #include "motion_control.h"
 #include "cardreader.h"
+#include "memreader.h"
 #include "watchdog.h"
 #include "ConfigurationStore.h"
 #include "language.h"
@@ -93,6 +94,7 @@
 // M30  - Delete file from SD (M30 filename.g)
 // M31  - Output time since last M109 or SD card start to serial
 // M42  - Change pin status via gcode Use M42 Px Sy to set pin x to value y, when omitting Px the onboard led will be used.
+// M71  - Wait for user input displaing message (M71 (message))
 // M80  - Turn on Power Supply
 // M81  - Turn off Power Supply
 // M82  - Set E codes absolute (default)
@@ -128,7 +130,7 @@
 // M280 - set servo position absolute. P: servo index, S: angle or microseconds
 // M300 - Play beepsound S<frequency Hz> P<duration ms>
 // M301 - Set PID parameters P I and D
-// M302 - Allow cold extrudes, or set the minimum extrude S<temperature>.
+// M302 - Allow cold extrudes
 // M303 - PID relay autotune S<temperature> sets the target temperature. (default target temperature = 150C)
 // M304 - Set bed PID parameters P I and D
 // M400 - Finish all moves
@@ -158,6 +160,7 @@
 #ifdef SDSUPPORT
 CardReader card;
 #endif
+MemReader utility;
 float homing_feedrate[] = HOMING_FEEDRATE;
 bool axis_relative_modes[] = AXIS_RELATIVE_MODES;
 int feedmultiply=100; //100->1 200->2
@@ -177,10 +180,6 @@ float extruder_offset[2][EXTRUDERS] = {
 #endif
 uint8_t active_extruder = 0;
 int fanSpeed=0;
-#ifdef SERVO_ENDSTOPS
-  int servo_endstops[] = SERVO_ENDSTOPS;
-  int servo_endstop_angles[] = SERVO_ENDSTOP_ANGLES;
-#endif
 #ifdef BARICUDA
 int ValvePressure=0;
 int EtoPPressure=0;
@@ -198,9 +197,6 @@ int EtoPPressure=0;
 //===========================================================================
 const char axis_codes[NUM_AXIS] = {'X', 'Y', 'Z', 'E'};
 static float destination[NUM_AXIS] = {  0.0, 0.0, 0.0, 0.0};
-#ifdef DELTA
-static float delta[3] = {0.0, 0.0, 0.0};
-#endif
 static float offset[3] = {0.0, 0.0, 0.0};
 static bool home_all_axis = true;
 static float feedrate = 1500.0, next_feedrate, saved_feedrate;
@@ -357,16 +353,6 @@ void servo_init()
   #endif
   #if (NUM_SERVOS >= 5)
     #error "TODO: enter initalisation code for more servos"
-  #endif
-
-  // Set position of Servo Endstops that are defined
-  #ifdef SERVO_ENDSTOPS
-  for(int8_t i = 0; i < 3; i++)
-  {
-    if(servo_endstops[i] > -1) {
-      servos[servo_endstops[i]].write(servo_endstop_angles[i * 2 + 1]);
-    }
-  }
   #endif
 }
 
@@ -582,6 +568,44 @@ void get_command()
       if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
     }
   }
+
+  // Printing from memory
+  if( utility.isprinting && serial_count == 0 ) {
+    while ( !utility.eof() && buflen < BUFSIZE ) {
+      int16_t n=utility.get();
+      serial_char = (char)n;
+      //char cbufdmy[128];
+      //sprintf( cbufdmy, "%d - (%d) %c", serial_count, serial_char, serial_char );
+      //SERIAL_ECHOLN( cbufdmy );
+      if(serial_char == '\n' ||
+       serial_char == '\r' ||
+       (serial_char == ':' && comment_mode == false) ||
+       serial_count >= (MAX_CMD_SIZE - 1)||n==-1)
+      {
+        if(utility.eof()){
+          //SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
+          //LCD_MESSAGEPGM(MSG_FILE_PRINTED);
+          utility.printingHasFinished();
+        }
+      
+        if(!serial_count)
+        {
+          comment_mode = false; //for new command
+          return; //if empty line
+        }
+        cmdbuffer[bufindw][serial_count] = 0; //terminate string
+        fromsd[bufindw] = true; // Non rimanda comandi sulla seriale ( verificare ???)
+        buflen += 1;
+        bufindw = (bufindw + 1)%BUFSIZE;
+        comment_mode = false;
+        serial_count = 0;
+      } else
+      {
+        if(serial_char == ';') comment_mode = true;
+        if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
+      }
+    }  
+  }
   #ifdef SDSUPPORT
   if(!card.sdprinting || serial_count!=0){
     return;
@@ -623,6 +647,12 @@ void get_command()
 //      }
       comment_mode = false; //for new command
       serial_count = 0; //clear buffer
+	  
+	  // ??? Visualizza ilcomando corrente
+	  //sprintf_P(time, PSTR(cmdbuffer));
+      //SERIAL_ECHO_START;
+      //SERIAL_ECHOLN(time);
+      //lcd_setstatus(time);
     }
     else
     {
@@ -681,18 +711,11 @@ static void axis_is_at_home(int axis) {
 static void homeaxis(int axis) {
 #define HOMEAXIS_DO(LETTER) \
   ((LETTER##_MIN_PIN > -1 && LETTER##_HOME_DIR==-1) || (LETTER##_MAX_PIN > -1 && LETTER##_HOME_DIR==1))
+
   if (axis==X_AXIS ? HOMEAXIS_DO(X) :
       axis==Y_AXIS ? HOMEAXIS_DO(Y) :
       axis==Z_AXIS ? HOMEAXIS_DO(Z) :
       0) {
-
-    // Engage Servo endstop if enabled
-    #ifdef SERVO_ENDSTOPS
-      if (SERVO_ENDSTOPS[axis] > -1) {
-        servos[servo_endstops[axis]].write(servo_endstop_angles[axis * 2]);
-      }
-    #endif
-      
     current_position[axis] = 0;
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
     destination[axis] = 1.5 * max_length(axis) * home_dir(axis);
@@ -715,13 +738,6 @@ static void homeaxis(int axis) {
     destination[axis] = current_position[axis];
     feedrate = 0.0;
     endstops_hit_on_purpose();
-
-    // Retract Servo endstop if enabled
-    #ifdef SERVO_ENDSTOPS
-      if (SERVO_ENDSTOPS[axis] > -1) {
-        servos[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
-      }
-    #endif
   }
 }
 #define HOMEAXIS(LETTER) homeaxis(LETTER##_AXIS)
@@ -812,41 +828,8 @@ void process_commands()
       for(int8_t i=0; i < NUM_AXIS; i++) {
         destination[i] = current_position[i];
       }
-          feedrate = 0.0;
-
-#ifdef DELTA
-          // A delta can only safely home all axis at the same time
-          // all axis have to home at the same time
-
-          // Move all carriages up together until the first endstop is hit.
-          current_position[X_AXIS] = 0;
-          current_position[Y_AXIS] = 0;
-          current_position[Z_AXIS] = 0;
-          plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]); 
-
-          destination[X_AXIS] = 3 * Z_MAX_LENGTH;
-          destination[Y_AXIS] = 3 * Z_MAX_LENGTH;
-          destination[Z_AXIS] = 3 * Z_MAX_LENGTH;
-          feedrate = 1.732 * homing_feedrate[X_AXIS];
-          plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], feedrate/60, active_extruder);
-          st_synchronize();
-          endstops_hit_on_purpose();
-
-          current_position[X_AXIS] = destination[X_AXIS];
-          current_position[Y_AXIS] = destination[Y_AXIS];
-          current_position[Z_AXIS] = destination[Z_AXIS];
-          
-          // take care of back off and rehome now we are all at the top
-          HOMEAXIS(X);
-          HOMEAXIS(Y);
-          HOMEAXIS(Z);
-
-          calculate_delta(current_position);
-          plan_set_position(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS]);
-
-#else // NOT DELTA
-
-          home_all_axis = !((code_seen(axis_codes[0])) || (code_seen(axis_codes[1])) || (code_seen(axis_codes[2])));
+      feedrate = 0.0;
+      home_all_axis = !((code_seen(axis_codes[0])) || (code_seen(axis_codes[1])) || (code_seen(axis_codes[2])));
 
       #if Z_HOME_DIR > 0                      // If homing away from BED do Z first
       if((home_all_axis) || (code_seen(axis_codes[Z_AXIS]))) {
@@ -876,10 +859,6 @@ void process_commands()
         feedrate = 0.0;
         st_synchronize();
         endstops_hit_on_purpose();
-
-        current_position[X_AXIS] = destination[X_AXIS];
-        current_position[Y_AXIS] = destination[Y_AXIS];
-        current_position[Z_AXIS] = destination[Z_AXIS];
       }
       #endif
 
@@ -917,8 +896,7 @@ void process_commands()
         }
       }
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-#endif // DELTA
-          
+
       #ifdef ENDSTOPS_ONLY_FOR_HOMING
         enable_endstops(false);
       #endif
@@ -1111,7 +1089,54 @@ void process_commands()
         }
       }
      break;
-    case 104: // M104
+     case 71: //M71
+      {
+#ifdef SDSUPPORT
+        card.pauseSDPrint();
+#endif
+        // ??? - Perche' ?
+        starpos = (strchr(strchr_pointer + 4,'*'));
+        if(starpos!=NULL)
+          *(starpos-1)='\0';
+        
+        starpos = (strchr(strchr_pointer + 4,'('));
+        if(starpos!=NULL) {
+          strchr_pointer = starpos+1;
+          starpos = (strchr(strchr_pointer,')'));
+          if(starpos!=NULL)
+            *(starpos)='\0';
+          lcd_setstatus(strchr_pointer);
+        }
+
+        codenum = 0;
+        //if(code_seen('P')) codenum = code_value(); // milliseconds to wait
+        //if(code_seen('S')) codenum = code_value() * 1000; // seconds to wait
+        lcd_ForceStatusScreen(true);
+        
+        st_synchronize();
+        previous_millis_cmd = millis();
+        if (codenum > 0){
+          codenum += millis();  // keep track of when we started waiting
+          while(millis()  < codenum && !lcd_clicked()){
+            manage_heater();
+            manage_inactivity();
+            lcd_update();
+          }
+        }else{
+          while(!lcd_clicked()){
+            manage_heater();
+            manage_inactivity();
+            lcd_update();
+          }
+        }
+        lcd_ForceStatusScreen(false);
+
+#ifdef SDSUPPORT
+        card.startFileprint();
+#endif
+
+      }
+	 case 104: // M104
       if(setTargetedHotend(104)){
         break;
       }
@@ -1124,7 +1149,7 @@ void process_commands()
     case 105 : // M105
       if(setTargetedHotend(105)){
         break;
-        }
+      }
       #if defined(TEMP_0_PIN) && TEMP_0_PIN > -1
         SERIAL_PROTOCOLPGM("ok T:");
         SERIAL_PROTOCOL_F(degHotend(tmp_extruder),1);
@@ -1611,22 +1636,17 @@ void process_commands()
     #if LARGE_FLASH == true && ( BEEPER > 0 || defined(ULTRALCD) )
     case 300: // M300
     {
-      int beepS = code_seen('S') ? code_value() : 110;
-      int beepP = code_seen('P') ? code_value() : 1000;
-      if (beepS > 0)
-      {
-        #if BEEPER > 0
-          tone(BEEPER, beepS);
-          delay(beepP);
-          noTone(BEEPER);
-        #elif defined(ULTRALCD)
-          lcd_buzz(beepS, beepP);
-        #endif
-      }
-      else
-      {
+      int beepS = 400;
+      int beepP = 1000;
+      if(code_seen('S')) beepS = code_value();
+      if(code_seen('P')) beepP = code_value();
+      #if BEEPER > 0
+        tone(BEEPER, beepS);
         delay(beepP);
-      }
+        noTone(BEEPER);
+      #elif defined(ULTRALCD)
+        lcd_buzz(beepS, beepP);
+      #endif
     }
     break;
     #endif // M300
@@ -1699,15 +1719,12 @@ void process_commands()
       #endif
      }
     break;
-    #ifdef PREVENT_DANGEROUS_EXTRUDE
-    case 302: // allow cold extrudes, or set the minimum extrude temperature
-    {
-	  float temp = .0;
-	  if (code_seen('S')) temp=code_value();
-      set_extrude_min_temp(temp);
+
+    case 302: // allow cold extrudes
+    { // ???
+      //allow_cold_extrudes(true);
     }
     break;
-	#endif
     case 303: // M303 PID autotune
     {
       float temp = 150.0;
@@ -2101,64 +2118,11 @@ void clamp_to_software_endstops(float target[3])
   }
 }
 
-#ifdef DELTA
-void calculate_delta(float cartesian[3])
-{
-  delta[X_AXIS] = sqrt(sq(DELTA_DIAGONAL_ROD)
-                       - sq(DELTA_TOWER1_X-cartesian[X_AXIS])
-                       - sq(DELTA_TOWER1_Y-cartesian[Y_AXIS])
-                       ) + cartesian[Z_AXIS];
-  delta[Y_AXIS] = sqrt(sq(DELTA_DIAGONAL_ROD)
-                       - sq(DELTA_TOWER2_X-cartesian[X_AXIS])
-                       - sq(DELTA_TOWER2_Y-cartesian[Y_AXIS])
-                       ) + cartesian[Z_AXIS];
-  delta[Z_AXIS] = sqrt(sq(DELTA_DIAGONAL_ROD)
-                       - sq(DELTA_TOWER3_X-cartesian[X_AXIS])
-                       - sq(DELTA_TOWER3_Y-cartesian[Y_AXIS])
-                       ) + cartesian[Z_AXIS];
-  /*
-  SERIAL_ECHOPGM("cartesian x="); SERIAL_ECHO(cartesian[X_AXIS]);
-  SERIAL_ECHOPGM(" y="); SERIAL_ECHO(cartesian[Y_AXIS]);
-  SERIAL_ECHOPGM(" z="); SERIAL_ECHOLN(cartesian[Z_AXIS]);
-
-  SERIAL_ECHOPGM("delta x="); SERIAL_ECHO(delta[X_AXIS]);
-  SERIAL_ECHOPGM(" y="); SERIAL_ECHO(delta[Y_AXIS]);
-  SERIAL_ECHOPGM(" z="); SERIAL_ECHOLN(delta[Z_AXIS]);
-  */
-}
-#endif
-
 void prepare_move()
 {
   clamp_to_software_endstops(destination);
 
   previous_millis_cmd = millis();
-#ifdef DELTA
-  float difference[NUM_AXIS];
-  for (int8_t i=0; i < NUM_AXIS; i++) {
-    difference[i] = destination[i] - current_position[i];
-  }
-  float cartesian_mm = sqrt(sq(difference[X_AXIS]) +
-                            sq(difference[Y_AXIS]) +
-                            sq(difference[Z_AXIS]));
-  if (cartesian_mm < 0.000001) { cartesian_mm = abs(difference[E_AXIS]); }
-  if (cartesian_mm < 0.000001) { return; }
-  float seconds = 6000 * cartesian_mm / feedrate / feedmultiply;
-  int steps = max(1, int(DELTA_SEGMENTS_PER_SECOND * seconds));
-  // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
-  // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
-  // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-  for (int s = 1; s <= steps; s++) {
-    float fraction = float(s) / float(steps);
-    for(int8_t i=0; i < NUM_AXIS; i++) {
-      destination[i] = current_position[i] + difference[i] * fraction;
-    }
-    calculate_delta(destination);
-    plan_buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS],
-                     destination[E_AXIS], feedrate*feedmultiply/60/100.0,
-                     active_extruder);
-  }
-#else
   // Do not use feedmultiply for E or Z only moves
   if( (current_position[X_AXIS] == destination [X_AXIS]) && (current_position[Y_AXIS] == destination [Y_AXIS])) {
       plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], feedrate/60, active_extruder);
@@ -2166,7 +2130,6 @@ void prepare_move()
   else {
     plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], feedrate*feedmultiply/60/100.0, active_extruder);
   }
-#endif
   for(int8_t i=0; i < NUM_AXIS; i++) {
     current_position[i] = destination[i];
   }
@@ -2410,4 +2373,3 @@ bool setTargetedHotend(int code){
   }
   return false;
 }
-
