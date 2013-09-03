@@ -35,6 +35,11 @@ char lcd_status_message[LCD_WIDTH+1] = WELCOME_MSG;
 
 void copy_and_scalePID_i();
 void copy_and_scalePID_d();
+static void lcd_ut_level_plate();
+static void lcd_ut_load_left();
+static void lcd_ut_unload_left();
+static void lcd_ut_load_right();
+static void lcd_ut_unload_right();
 
 /* Different menus */
 static void lcd_status_screen();
@@ -50,7 +55,6 @@ static void lcd_control_temperature_preheat_abs_settings_menu();
 static void lcd_control_motion_menu();
 static void lcd_control_retract_menu();
 static void lcd_sdcard_menu();
-static void lcd_utilities_menu();
 
 static void lcd_quick_feedback();//Cause an LCD refresh, and give the user visual or audiable feedback that something has happend
 
@@ -245,7 +249,8 @@ static void lcd_main_menu()
     }else{
         MENU_ITEM(submenu, MSG_PREPARE, lcd_prepare_menu);
     }
-    MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
+    // Do not show "Settings" for normal users
+    //MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
 #ifdef SDSUPPORT
     if (card.cardOK)
     {
@@ -268,7 +273,6 @@ static void lcd_main_menu()
         MENU_ITEM(gcode, MSG_INIT_SDCARD, PSTR("M21")); // Manually initialize the SD-card via user interface
 #endif
     }
-    MENU_ITEM(submenu, "Utilities", lcd_utilities_menu);
 #endif
     END_MENU();
 }
@@ -350,6 +354,16 @@ static void lcd_prepare_menu()
     MENU_ITEM(function, MSG_PREHEAT_ABS, lcd_preheat_abs);
     MENU_ITEM(function, MSG_COOLDOWN, lcd_cooldown);
     MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
+    MENU_ITEM(function, MSG_PLATE_LEVEL, lcd_ut_level_plate);
+#if EXTRUDERS > 1
+    MENU_ITEM(function, MSG_LOAD_LEFT, lcd_ut_load_left);
+    MENU_ITEM(function, MSG_UNLOAD_LEFT, lcd_ut_unload_left);
+    MENU_ITEM(function, MSG_LOAD_RIGHT, lcd_ut_load_right);
+    MENU_ITEM(function, MSG_UNLOAD_RIGHT, lcd_ut_unload_right);
+#else
+    MENU_ITEM(function, MSG_LOAD_SINGLE, lcd_ut_load_left);
+    MENU_ITEM(function, MSG_UNLOAD_SINGLE, lcd_ut_unload_left);
+#endif
     END_MENU();
 }
 
@@ -666,18 +680,34 @@ void lcd_sdcard_menu()
     END_MENU();
 }
 
-static void lcd_ut_calib()
+static void lcd_ut_level_plate()
 {
   utility.startMemprint(1);
   lcd_return_to_status();
 }
 
-void lcd_utilities_menu()
+static void lcd_ut_load_left()
 {
-  START_MENU();
-  MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
-  MENU_ITEM(function, "Calib. piano", lcd_ut_calib);
-  END_MENU ();
+  utility.startMemprint(2);
+  lcd_return_to_status();
+}
+
+static void lcd_ut_unload_left()
+{
+  utility.startMemprint(3);
+  lcd_return_to_status();
+}
+
+static void lcd_ut_load_right()
+{
+  utility.startMemprint(4);
+  lcd_return_to_status();
+}
+
+static void lcd_ut_unload_right()
+{
+  utility.startMemprint(5);
+  lcd_return_to_status();
 }
 
 #define menu_edit_type(_type, _name, _strFunc, scale) \

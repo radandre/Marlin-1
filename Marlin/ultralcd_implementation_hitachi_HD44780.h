@@ -372,8 +372,16 @@ Possible status screens:
 */
 static void lcd_implementation_status_screen()
 {
-    int tHotend=int(degHotend(0) + 0.5);
-    int tTarget=int(degTargetHotend(0) + 0.5);
+#if EXTRUDERS > 1
+#define LCD_SHOW_RIGHT 0
+#define LCD_SHOW_LEFT 1
+#else
+#define LCD_SHOW_RIGHT 1
+#define LCD_SHOW_LEFT 0
+#endif
+
+    int tHotend=int(degHotend(LCD_SHOW_LEFT) + 0.5);
+    int tTarget=int(degTargetHotend(LCD_SHOW_LEFT) + 0.5);
 
 #if LCD_WIDTH < 20
     lcd.setCursor(0, 0);
@@ -412,8 +420,8 @@ static void lcd_implementation_status_screen()
     //If we have an 2nd extruder or heated bed, show that in the top right corner
     lcd.setCursor(10, 0);
 #  if EXTRUDERS > 1
-    tHotend = int(degHotend(1) + 0.5);
-    tTarget = int(degTargetHotend(1) + 0.5);
+    tHotend = int(degHotend(LCD_SHOW_RIGHT) + 0.5);
+    tTarget = int(degTargetHotend(LCD_SHOW_RIGHT) + 0.5);
     lcd.print(LCD_STR_THERMOMETER[0]);
 #  else//Heated bed
     tHotend=int(degBed() + 0.5);

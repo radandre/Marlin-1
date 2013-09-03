@@ -16,11 +16,13 @@ MemReader::MemReader()
 
 void MemReader::startMemprint(const uint8_t nr)
 {
-  program = nr;
-  pos = 0;
-  isprinting = true;
-  lcd_ForceStatusScreen(true);
-  lcd_ForceStatusScreen(false);
+  if ( ScriptLength[nr] > 0 ) {
+    program = nr;
+    pos = 0;
+    isprinting = true;
+    lcd_ForceStatusScreen(true);
+    lcd_ForceStatusScreen(false);
+  }
 }
 
 /* ??? Check se serve */
