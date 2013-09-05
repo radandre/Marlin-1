@@ -335,7 +335,16 @@ static void lcd_tune_menu()
     MENU_ITEM_EDIT(int3, MSG_FAN_SPEED, &fanSpeed, 0, 255);
     MENU_ITEM_EDIT(int3, MSG_FLOW, &extrudemultiply, 10, 999);
 #ifdef FILAMENTCHANGEENABLE
-     MENU_ITEM(gcode, MSG_FILAMENTCHANGE, PSTR("M600"));
+    MENU_ITEM(gcode, MSG_FILAMENTCHANGE, PSTR("M600"));
+#endif
+#if EXTRUDERS > 1
+    MENU_ITEM(function, MSG_LOAD_LEFT, lcd_ut_load_left);
+    MENU_ITEM(function, MSG_UNLOAD_LEFT, lcd_ut_unload_left);
+    MENU_ITEM(function, MSG_LOAD_RIGHT, lcd_ut_load_right);
+    MENU_ITEM(function, MSG_UNLOAD_RIGHT, lcd_ut_unload_right);
+#else
+    MENU_ITEM(function, MSG_LOAD_SINGLE, lcd_ut_load_left);
+    MENU_ITEM(function, MSG_UNLOAD_SINGLE, lcd_ut_unload_left);
 #endif
     END_MENU();
 }
