@@ -354,6 +354,7 @@
 #else
 #define FAN_PIN            4 // IO pin. Buffer needed
 #define FAN_PIN2           5 // IO pin. Buffer needed
+#define FAN_TO_FAN2	     // If enabled FAN_PIN2 acts exactly as FAN_PIN
 #endif
 #define PS_ON_PIN          12
 

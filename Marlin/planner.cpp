@@ -491,6 +491,9 @@ void check_axes_activity()
   fanSpeedSoftPwm = tail_fan_speed;
   #else
   analogWrite(FAN_PIN,tail_fan_speed);
+  #ifdef FAN_TO_FAN2
+  analogWrite(FAN_PIN,tail_fan_speed);
+  #endif
   #endif//!FAN_SOFT_PWM
 #endif//FAN_PIN > -1
 #ifdef AUTOTEMP
