@@ -492,7 +492,7 @@ void check_axes_activity()
   #else
   analogWrite(FAN_PIN,tail_fan_speed);
   #ifdef FAN_TO_FAN2
-  analogWrite(FAN_PIN,tail_fan_speed);
+  analogWrite(FAN_PIN2,tail_fan_speed);
   #endif
   #endif//!FAN_SOFT_PWM
 #endif//FAN_PIN > -1
