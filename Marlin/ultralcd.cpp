@@ -322,29 +322,20 @@ static void lcd_tune_menu()
     START_MENU();
     MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
     MENU_ITEM_EDIT(int3, MSG_SPEED, &feedmultiply, 10, 999);
-    MENU_ITEM_EDIT(int3, MSG_NOZZLE, &target_temperature[0], 0, HEATER_0_MAXTEMP - 15);
+    MENU_ITEM_EDIT(int3, MSG_NOZZLE, &target_temperature[0], 0, HEATER_0_MAXTEMP - 5);
 #if TEMP_SENSOR_1 != 0
-    MENU_ITEM_EDIT(int3, MSG_NOZZLE1, &target_temperature[1], 0, HEATER_1_MAXTEMP - 15);
+    MENU_ITEM_EDIT(int3, MSG_NOZZLE1, &target_temperature[1], 0, HEATER_1_MAXTEMP - 5);
 #endif
 #if TEMP_SENSOR_2 != 0
-    MENU_ITEM_EDIT(int3, MSG_NOZZLE2, &target_temperature[2], 0, HEATER_2_MAXTEMP - 15);
+    MENU_ITEM_EDIT(int3, MSG_NOZZLE2, &target_temperature[2], 0, HEATER_2_MAXTEMP - 5);
 #endif
 #if TEMP_SENSOR_BED != 0
-    MENU_ITEM_EDIT(int3, MSG_BED, &target_temperature_bed, 0, BED_MAXTEMP - 15);
+    MENU_ITEM_EDIT(int3, MSG_BED, &target_temperature_bed, 0, BED_MAXTEMP - 5);
 #endif
     MENU_ITEM_EDIT(int3, MSG_FAN_SPEED, &fanSpeed, 0, 255);
     MENU_ITEM_EDIT(int3, MSG_FLOW, &extrudemultiply, 10, 999);
 #ifdef FILAMENTCHANGEENABLE
     MENU_ITEM(gcode, MSG_FILAMENTCHANGE, PSTR("M600"));
-#endif
-#if EXTRUDERS > 1
-    MENU_ITEM(function, MSG_LOAD_LEFT, lcd_ut_load_left);
-    MENU_ITEM(function, MSG_UNLOAD_LEFT, lcd_ut_unload_left);
-    MENU_ITEM(function, MSG_LOAD_RIGHT, lcd_ut_load_right);
-    MENU_ITEM(function, MSG_UNLOAD_RIGHT, lcd_ut_unload_right);
-#else
-    MENU_ITEM(function, MSG_LOAD_SINGLE, lcd_ut_load_left);
-    MENU_ITEM(function, MSG_UNLOAD_SINGLE, lcd_ut_unload_left);
 #endif
     END_MENU();
 }
