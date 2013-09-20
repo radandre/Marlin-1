@@ -40,6 +40,7 @@
 #include "ConfigurationStore.h"
 #include "language.h"
 #include "pins_arduino.h"
+#include "Hysteresis.h"
 
 #if NUM_SERVOS > 0
 #include "Servo.h"
@@ -935,6 +936,10 @@ void process_commands()
   {
     switch( (int)code_value() )
     {
+
+
+      DECLARE_HYSTERESIS_MCODES(98, 99)
+
 #ifdef ULTIPANEL
     case 0: // M0 - Unconditional stop - Wait for user button press on LCD
     case 1: // M1 - Conditional stop - Wait for user button press on LCD
@@ -1587,8 +1592,7 @@ void process_commands()
     #endif
     case 220: // M220 S<factor in percent>- set speed factor override percentage
     {
-      if(code_seen('S'))
-      {
+      if(code_seen('S')) {
         feedmultiply = code_value() ;
       }
     }
@@ -1775,6 +1779,8 @@ void process_commands()
     {
         float target[4];
         float lastpos[4];
+        float old_feedrate=feedrate;
+        feedrate=FILAMENTCHANGE_FEEDRATE;
         target[X_AXIS]=current_position[X_AXIS];
         target[Y_AXIS]=current_position[Y_AXIS];
         target[Z_AXIS]=current_position[Z_AXIS];
@@ -1844,7 +1850,7 @@ void process_commands()
           #endif
         }
 
-        plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder);
+        plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/100, active_extruder);
 
         //finish moves
         st_synchronize();
@@ -1853,7 +1859,8 @@ void process_commands()
         disable_e1();
         disable_e2();
         delay(100);
-        LCD_ALERTMESSAGEPGM(MSG_FILAMENTCHANGE);
+        LCD_MESSAGEPGM(MSG_FILAMENTCHANGE);
+        lcd_ForceStatusScreen(true);
         uint8_t cnt=0;
         while(!lcd_clicked()){
           cnt++;
@@ -1875,23 +1882,37 @@ void process_commands()
           }
         }
 
-        //return to normal
-        if(code_seen('L'))
-        {
-          target[E_AXIS]+= -code_value();
+        // Wait until the button is not clicked
+        while(lcd_clicked()){
+          manage_heater();
+          manage_inactivity();
+          lcd_update();
         }
-        else
-        {
-          #ifdef FILAMENTCHANGE_FINALRETRACT
-            target[E_AXIS]+=(-1)*FILAMENTCHANGE_FINALRETRACT ;
-          #endif
+        
+        LCD_MESSAGEPGM(MSG_LOAD_SINGLE);
+        // Extrude until the button is clicked
+        while(!lcd_clicked()){
+          manage_heater();
+          manage_inactivity();
+          lcd_update();
+
+          target[E_AXIS]+=0.5;
+          plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/100, active_extruder);
+
+          }
         }
-        current_position[E_AXIS]=target[E_AXIS]; //the long retract of L is compensated by manual filament feeding
+
+        // E axis is handled directly by the user so reset it to the actual position
+        target[E_AXIS]=lastpos[E_AXIS];
+        current_position[E_AXIS]=target[E_AXIS];
         plan_set_e_position(current_position[E_AXIS]);
-        plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //should do nothing
+
+        plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/100, active_extruder); // should do nothing
         plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //move xy back
-        plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], lastpos[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //move z back
-        plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], lastpos[Z_AXIS], lastpos[E_AXIS], feedrate/60, active_extruder); //final untretract
+        plan_buffer_line(lastpos[X_AXIS],  lastpos[Y_AXIS], lastpos[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //move z back
+        plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], lastpos[Z_AXIS], lastpos[E_AXIS], feedrate/60, active_extruder); //final untretract - should do nothing
+        feedrate=old_feedrate;
+        lcd_ForceStatusScreen(false);
     }
     break;
     #endif //FILAMENTCHANGEENABLE

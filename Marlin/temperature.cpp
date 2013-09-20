@@ -1057,8 +1057,10 @@ ISR(TIMER0_COMPB_vect)
     soft_pwm_0 = soft_pwm[0];
     if(soft_pwm_0 > 0) WRITE(HEATER_0_PIN,1);
     #if EXTRUDERS > 1
+    #if defined(HEATER_1_PIN) && HEATER_1_PIN > -1
     soft_pwm_1 = soft_pwm[1];
     if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1);
+    #endif
     #endif
     #if EXTRUDERS > 2
     soft_pwm_2 = soft_pwm[2];
@@ -1080,7 +1082,9 @@ ISR(TIMER0_COMPB_vect)
   }
   if(soft_pwm_0 <= pwm_count) WRITE(HEATER_0_PIN,0);
   #if EXTRUDERS > 1
+  #if defined(HEATER_1_PIN) && HEATER_1_PIN > -1
   if(soft_pwm_1 <= pwm_count) WRITE(HEATER_1_PIN,0);
+  #endif
   #endif
   #if EXTRUDERS > 2
   if(soft_pwm_2 <= pwm_count) WRITE(HEATER_2_PIN,0);

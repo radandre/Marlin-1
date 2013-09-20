@@ -49,7 +49,7 @@
 
 
 #if MOTHERBOARD == 34 || MOTHERBOARD == 34
-	#define MACHINE_NAME "SHAREBOT BI"
+	#define MACHINE_NAME "SHAREBOT NG "
 	#define FIRMWARE_URL "http://www.sharebot.it"
 #elif MOTHERBOARD == 7 || MOTHERBOARD == 71
 
@@ -329,7 +329,7 @@
 
 	#define MSG_BED_DONE "Bed done."
 
-	#define MSG_M115_REPORT "FIRMWARE_NAME:Marlin V1; Sharebot" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) "\n"
+	#define MSG_M115_REPORT "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) "\n"
 
 	#define MSG_COUNT_X " Count X: "
 
@@ -2050,7 +2050,7 @@
 
 	// LCD Menu Messages
 
-	#define WELCOME_MSG MACHINE_NAME " Pronta"
+	#define WELCOME_MSG MACHINE_NAME ""
 
 	#define MSG_SD_INSERTED          "SD Card inserita"
 
@@ -2066,13 +2066,13 @@
 
 	#define MSG_SET_ORIGIN           "Imposta Origine"
 
-	#define MSG_PREHEAT_PLA          "Preriscalda PLA"
+	#define MSG_PREHEAT_PLA          "Preriscalda DX"
 
-	#define MSG_PREHEAT_PLA_SETTINGS "Preris. PLA Conf"
+	#define MSG_PREHEAT_PLA_SETTINGS "Preris. DX Conf"
 
-	#define MSG_PREHEAT_ABS          "Preriscalda ABS"
+	#define MSG_PREHEAT_ABS          "Preriscalda SX"
 
-	#define MSG_PREHEAT_ABS_SETTINGS "Preris. ABS Conf"
+	#define MSG_PREHEAT_ABS_SETTINGS "Preris. SX Conf"
 
 	#define MSG_COOLDOWN             "Raffredda"
 
@@ -2083,13 +2083,13 @@
 	#define MSG_MOVE_AXIS            "Muovi Asse"
 
 	#define MSG_PLATE_LEVEL 	 "Calib. Piano"
-	#define MSG_LOAD_SINGLE 	 "Carica"
-        #define MSG_UNLOAD_SINGLE 	 "Scarica"
-        #define MSG_LOAD_LEFT            "Carica Sinistro"
-        #define MSG_UNLOAD_LEFT 	 "Scarica Sinistro"
-        #define MSG_LOAD_RIGHT 		 "Carica Destro"
-        #define MSG_UNLOAD_RIGHT 	 "Scarica Destro"
-	#define MSG_SPEED                "Velcità"
+	#define MSG_LOAD_SINGLE 	 "Carica Filo"
+        #define MSG_UNLOAD_SINGLE 	 "Scarica Filo"
+        #define MSG_LOAD_LEFT            "Carica Filo SX"
+        #define MSG_UNLOAD_LEFT 	 "Scarica Filo SX"
+        #define MSG_LOAD_RIGHT 		 "Carica Filo DX"
+        #define MSG_UNLOAD_RIGHT 	 "Scarica Filo DX"
+	#define MSG_SPEED                "Velocita'"
 
 	#define MSG_NOZZLE               "Ugello"
 
@@ -2103,7 +2103,7 @@
 
 	#define MSG_FLOW                 "Flusso"
 
-	#define MSG_CONTROL              "Controllo"
+	#define MSG_CONTROL              "Settaggi"
 
 	#define MSG_MIN                  " \002 Min:"
 
@@ -2201,17 +2201,17 @@
 
 	#define MSG_CONTROL_RETRACT      "Ritrai mm"
 
-	#define MSG_CONTROL_RETRACTF     "Ritrai  F"
+	#define MSG_CONTROL_RETRACTF     "Ritrai F"
 
 	#define MSG_CONTROL_RETRACT_ZLIFT "Salta mm"
 
-	#define MSG_CONTROL_RETRACT_RECOVER "UnRet +mm"
+	#define MSG_CONTROL_RETRACT_RECOVER " UnRet +mm"
 
-	#define MSG_CONTROL_RETRACT_RECOVERF "UnRet  F"
+	#define MSG_CONTROL_RETRACT_RECOVERF " UnRet  F"
 
-	#define MSG_AUTORETRACT          "AutoArretramento"
+	#define MSG_AUTORETRACT          " AutoArretramento"
 
-	#define MSG_SERIAL_ERROR_MENU_STRUCTURE "Qualcosa non va in MenuStructure."
+	#define MSG_SERIAL_ERROR_MENU_STRUCTURE "Qualcosa non va nel menu"
 
 	#define MSG_FILAMENTCHANGE       "Cambia filamento"
 
@@ -2283,7 +2283,7 @@
 
 	#define MSG_BED_DONE             "Piatto Pronto."
 
-	#define MSG_M115_REPORT          "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) "\n"
+	#define MSG_M115_REPORT          "FIRMWARE_NAME:Marlin ShareBot" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) "\n"
 
 	#define MSG_COUNT_X              " Calcola X: "
 
@@ -2355,7 +2355,7 @@
 
 	#define MSG_STEPPER_TO_HIGH     "Steprate troppo alto: "
 
-	#define MSG_ENDSTOPS_HIT         "Fine corsa "
+	#define MSG_ENDSTOPS_HIT         "Raggiunto il fondo carrello: "
 
 	#define MSG_ERR_COLD_EXTRUDE_STOP " prevenuta estrusione fredda"
 

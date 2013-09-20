@@ -57,6 +57,7 @@
 #include "temperature.h"
 #include "ultralcd.h"
 #include "language.h"
+#include "Hysteresis.h"
 
 //===========================================================================
 //=============================public variables ============================
@@ -518,6 +519,8 @@ float junction_deviation = 0.1;
 // calculation the caller must also provide the physical length of the line in millimeters.
 void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t &extruder)
 {
+  hysteresis.InsertCorrection(x,y,z,e);
+
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
 

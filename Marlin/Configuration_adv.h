@@ -77,8 +77,8 @@
 // extruder temperature is above/below EXTRUDER_AUTO_FAN_TEMPERATURE.
 // Multiple extruders can be assigned to the same pin in which case 
 // the fan will turn on when any selected extruder is above the threshold.
-#define EXTRUDER_0_AUTO_FAN_PIN   5
-#define EXTRUDER_1_AUTO_FAN_PIN   5
+#define EXTRUDER_0_AUTO_FAN_PIN   -1
+#define EXTRUDER_1_AUTO_FAN_PIN   -1
 #define EXTRUDER_2_AUTO_FAN_PIN   -1
 #define EXTRUDER_AUTO_FAN_TEMPERATURE 50
 #define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
@@ -305,13 +305,14 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 
 //adds support for experimental filament exchange support M600; requires display
 #ifdef ULTIPANEL
-  //#define FILAMENTCHANGEENABLE
+  #define FILAMENTCHANGEENABLE
   #ifdef FILAMENTCHANGEENABLE
     #define FILAMENTCHANGE_XPOS 3
     #define FILAMENTCHANGE_YPOS 3
     #define FILAMENTCHANGE_ZADD 10
     #define FILAMENTCHANGE_FIRSTRETRACT -2
     #define FILAMENTCHANGE_FINALRETRACT -100
+    #define FILAMENTCHANGE_FEEDRATE 600
   #endif
 #endif
  
