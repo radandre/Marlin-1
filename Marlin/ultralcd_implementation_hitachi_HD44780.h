@@ -21,8 +21,8 @@ extern volatile uint16_t buttons;  //an extended version of the last checked but
 
 #ifdef ULTIPANEL
 // All Ultipanels might have an encoder - so this is always be mapped onto first two bits
-#define BLEN_B 1
-#define BLEN_A 0
+#define BLEN_B 0
+#define BLEN_A 1
 
 #define EN_B (1<<BLEN_B) // The two encoder pins are connected through BTN_EN1 and BTN_EN2
 #define EN_A (1<<BLEN_A)
