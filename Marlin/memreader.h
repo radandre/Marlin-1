@@ -6,34 +6,34 @@
 //Length=13 ( 1 in meno dello 0 finale )
 /*static uint8_t LEVEL_PLATE[] = { 'M', '7', '1', ' ', '(', 'p', 'i', 'p', 'p', 'o', ')', 0xd, 0x0d, 0x00 };*/
 
-#include "sc_level_plate.h"
-#include "sc_load_left.h"
-#include "sc_load_right.h"
-#include "sc_unload_left.h"
-#include "sc_unload_right.h"
+#include "sc_level_plate_a.h"
+#include "sc_level_plate_m.h"
+#include "sc_change_left.h"
+#include "sc_change_right.h"
+#include "sc_nozzles.h"
 
 static uint8_t *Script[6] = { 0,
-                              LEVEL_PLATE,
-                              LOAD_LEFT,
-                              UNLOAD_LEFT,
+                              LEVEL_PLATE_A,
+                              LEVEL_PLATE_M,
+                              NOZZLES,
+                              CHANGE_RIGHT,
 #if EXTRUDERS > 1
-                              LOAD_RIGHT,
-                              UNLOAD_RIGHT
+                              CHANGE_LEFT
 #else
-                              0,0
+                              0
 #endif
 };
                               
 // Utilities program length
 static uint32_t ScriptLength[6] = { -1,
-                                     LEVEL_PLATE_LENGTH,
-                                     LOAD_LEFT_LENGTH,
-				     UNLOAD_LEFT_LENGTH,
+                                     LEVEL_PLATE_A_LENGTH,
+                                     LEVEL_PLATE_M_LENGTH,
+                                     NOZZLES_LENGTH,
+				     CHANGE_RIGHT_LENGTH,
 #if EXTRUDERS > 1
-                                     LOAD_RIGHT_LENGTH,
-                                     UNLOAD_RIGHT_LENGTH
+                                     CHANGE_LEFT_LENGTH
 #else
-                                     -1,-1
+                                     -1
 #endif
 };
 

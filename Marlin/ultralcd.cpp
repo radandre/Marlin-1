@@ -35,11 +35,11 @@ char lcd_status_message[LCD_WIDTH+1] = WELCOME_MSG;
 
 void copy_and_scalePID_i();
 void copy_and_scalePID_d();
-static void lcd_ut_level_plate();
-static void lcd_ut_load_left();
-static void lcd_ut_unload_left();
-static void lcd_ut_load_right();
-static void lcd_ut_unload_right();
+static void lcd_ut_level_plate_a();
+static void lcd_ut_level_plate_m();
+static void lcd_ut_change_right();
+static void lcd_ut_change_left();
+static void lcd_ut_nozzles();
 
 /* Different menus */
 static void lcd_status_screen();
@@ -289,8 +289,8 @@ static void lcd_autostart_sd()
 void lcd_preheat_pla()
 {
     setTargetHotend0(plaPreheatHotendTemp);
-    setTargetHotend1(plaPreheatHotendTemp);
-    setTargetHotend2(plaPreheatHotendTemp);
+    //setTargetHotend1(plaPreheatHotendTemp);
+    //setTargetHotend2(plaPreheatHotendTemp);
     setTargetBed(plaPreheatHPBTemp);
     fanSpeed = plaPreheatFanSpeed;
     lcd_return_to_status();
@@ -300,8 +300,8 @@ void lcd_preheat_pla()
 void lcd_preheat_abs()
 {
     setTargetHotend0(absPreheatHotendTemp);
-    setTargetHotend1(absPreheatHotendTemp);
-    setTargetHotend2(absPreheatHotendTemp);
+    //setTargetHotend1(absPreheatHotendTemp);
+    //setTargetHotend2(absPreheatHotendTemp);
     setTargetBed(absPreheatHPBTemp);
     fanSpeed = absPreheatFanSpeed;
     lcd_return_to_status();
@@ -354,15 +354,14 @@ static void lcd_prepare_menu()
     MENU_ITEM(function, MSG_PREHEAT_ABS, lcd_preheat_abs);
     MENU_ITEM(function, MSG_COOLDOWN, lcd_cooldown);
     MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
-    MENU_ITEM(function, MSG_PLATE_LEVEL, lcd_ut_level_plate);
+    MENU_ITEM(function, MSG_PLATE_LEVEL_A, lcd_ut_level_plate_a);
+    MENU_ITEM(function, MSG_PLATE_LEVEL_M, lcd_ut_level_plate_m);
+    //MENU_ITEM(function, MSG_NOZZLES, lcd_ut_nozzles);
 #if EXTRUDERS > 1
-    MENU_ITEM(function, MSG_LOAD_LEFT, lcd_ut_load_left);
-    MENU_ITEM(function, MSG_UNLOAD_LEFT, lcd_ut_unload_left);
-    MENU_ITEM(function, MSG_LOAD_RIGHT, lcd_ut_load_right);
-    MENU_ITEM(function, MSG_UNLOAD_RIGHT, lcd_ut_unload_right);
+    MENU_ITEM(function, MSG_CHANGE_RIGHT, lcd_ut_change_right);
+    MENU_ITEM(function, MSG_CHANGE_LEFT, lcd_ut_change_left);
 #else
-    MENU_ITEM(function, MSG_LOAD_SINGLE, lcd_ut_load_left);
-    MENU_ITEM(function, MSG_UNLOAD_SINGLE, lcd_ut_unload_left);
+    MENU_ITEM(function, MSG_CHANGE_SINGLE, lcd_ut_change_right);
 #endif
     END_MENU();
 }
@@ -598,10 +597,10 @@ static void lcd_control_motion_menu()
     MENU_ITEM_EDIT(float3, MSG_VXY_JERK, &max_xy_jerk, 1, 990);
     MENU_ITEM_EDIT(float52, MSG_VZ_JERK, &max_z_jerk, 0.1, 990);
     MENU_ITEM_EDIT(float3, MSG_VE_JERK, &max_e_jerk, 1, 990);
-    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_X, &max_feedrate[X_AXIS], 1, 999);
-    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_Y, &max_feedrate[Y_AXIS], 1, 999);
-    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_Z, &max_feedrate[Z_AXIS], 1, 999);
-    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_E, &max_feedrate[E_AXIS], 1, 999);
+    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_X, &max_feedrate[X_AXIS], 1, 250);
+    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_Y, &max_feedrate[Y_AXIS], 1, 250);
+    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_Z, &max_feedrate[Z_AXIS], 1, 250);
+    MENU_ITEM_EDIT(float3, MSG_VMAX MSG_E, &max_feedrate[E_AXIS], 1, 250);
     MENU_ITEM_EDIT(float3, MSG_VMIN, &minimumfeedrate, 0, 999);
     MENU_ITEM_EDIT(float3, MSG_VTRAV_MIN, &mintravelfeedrate, 0, 999);
     MENU_ITEM_EDIT_CALLBACK(long5, MSG_AMAX MSG_X, &max_acceleration_units_per_sq_second[X_AXIS], 100, 99000, reset_acceleration_rates);
@@ -680,33 +679,33 @@ void lcd_sdcard_menu()
     END_MENU();
 }
 
-static void lcd_ut_level_plate()
+static void lcd_ut_level_plate_a()
 {
   utility.startMemprint(1);
   lcd_return_to_status();
 }
 
-static void lcd_ut_load_left()
+static void lcd_ut_level_plate_m()
 {
   utility.startMemprint(2);
   lcd_return_to_status();
 }
 
-static void lcd_ut_unload_left()
-{
-  utility.startMemprint(3);
-  lcd_return_to_status();
-}
-
-static void lcd_ut_load_right()
+static void lcd_ut_change_right()
 {
   utility.startMemprint(4);
   lcd_return_to_status();
 }
 
-static void lcd_ut_unload_right()
+static void lcd_ut_change_left()
 {
   utility.startMemprint(5);
+  lcd_return_to_status();
+}
+
+static void lcd_ut_nozzles()
+{
+  utility.startMemprint(3);
   lcd_return_to_status();
 }
 

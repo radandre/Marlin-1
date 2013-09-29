@@ -2082,13 +2082,13 @@
 
 	#define MSG_MOVE_AXIS            "Muovi Asse"
 
-	#define MSG_PLATE_LEVEL 	 "Calib. Piano"
-	#define MSG_LOAD_SINGLE 	 "Carica Filo"
-        #define MSG_UNLOAD_SINGLE 	 "Scarica Filo"
-        #define MSG_LOAD_LEFT            "Carica Filo SX"
-        #define MSG_UNLOAD_LEFT 	 "Scarica Filo SX"
-        #define MSG_LOAD_RIGHT 		 "Carica Filo DX"
-        #define MSG_UNLOAD_RIGHT 	 "Scarica Filo DX"
+	#define MSG_PLATE_LEVEL_A 	 "Calib. Piano Auto"
+        #define MSG_PLATE_LEVEL_M        "Calib. Piano Man."
+        #define MSG_NOZZLES              "Calib. Ugelli"
+	#define MSG_CHANGE_RIGHT 	 "Cambia Filo DX"
+        #define MSG_CHANGE_LEFT          "Cambia Filo SX"
+        #define MSG_CHANGE_SINGLE 	 "Cambia Filo"
+        #define MSG_LOAD_SINGLE          "Carica Filo"
 	#define MSG_SPEED                "Velocita'"
 
 	#define MSG_NOZZLE               "Ugello"

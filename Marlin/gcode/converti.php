@@ -1,8 +1,8 @@
 #!/usr/bin/php -q
 <?PHP
-$names=Array( "ShareBotBIlevelPlate.gcode",  "ShareBotBILoadLeft.gcode",  "ShareBotBILoadRight.gcode",  "ShareBotBIUnloadLeft.gcode",  "ShareBotBIUnloadRight.gcode" );
-$out=Array(   "sc_level_plate.h",            "sc_load_left.h",            "sc_load_right.h",            "sc_unload_left.h",            "sc_unload_right.h" );
-$vars=Array(  "LEVEL_PLATE",		     "LOAD_LEFT",		  "LOAD_RIGHT",			"UNLOAD_LEFT",		       "UNLOAD_RIGHT" );
+$names=Array( "SharebotNG_LevelPlate_Auto.gcode",  "SharebotNG_FilamentChange_L.gcode",  "SharebotNG_FilamentChange_R.gcode",  "SharebotNG_LevelPlate_Man.gcode",  "SharebotNG_Nozzles.gcode" );
+$out=Array(   "sc_level_plate_a.h",            "sc_change_left.h",            "sc_change_right.h",            "sc_level_plate_m.h",            "sc_nozzles.h" );
+$vars=Array(  "LEVEL_PLATE_A",		     "CHANGE_LEFT",		  "CHANGE_RIGHT",			"LEVEL_PLATE_M",		       "NOZZLES" );
 
 print_r( $names );
 

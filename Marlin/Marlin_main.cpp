@@ -1899,7 +1899,6 @@ void process_commands()
           target[E_AXIS]+=0.5;
           plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/100, active_extruder);
 
-          }
         }
 
         // E axis is handled directly by the user so reset it to the actual position
