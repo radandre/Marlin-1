@@ -81,6 +81,7 @@ static void menu_action_setting_edit_callback_float5(const char* pstr, float* pt
 static void menu_action_setting_edit_callback_float51(const char* pstr, float* ptr, float minValue, float maxValue, menuFunc_t callbackFunc);
 static void menu_action_setting_edit_callback_float52(const char* pstr, float* ptr, float minValue, float maxValue, menuFunc_t callbackFunc);
 static void menu_action_setting_edit_callback_long5(const char* pstr, unsigned long* ptr, unsigned long minValue, unsigned long maxValue, menuFunc_t callbackFunc);
+void(* lcdReset) (void) = 0;
 
 #define ENCODER_FEEDRATE_DEADZONE 10
 
@@ -274,6 +275,7 @@ static void lcd_main_menu()
 #endif
     }
 #endif
+    MENU_ITEM(function, "Reset", lcdReset);
     END_MENU();
 }
 
