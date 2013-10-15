@@ -299,8 +299,8 @@ void lcd_preheat_pla()
 
 void lcd_preheat_abs()
 {
-    setTargetHotend0(absPreheatHotendTemp);
-    //setTargetHotend1(absPreheatHotendTemp);
+    //setTargetHotend0(absPreheatHotendTemp);
+    setTargetHotend1(absPreheatHotendTemp);
     //setTargetHotend2(absPreheatHotendTemp);
     setTargetBed(absPreheatHPBTemp);
     fanSpeed = absPreheatFanSpeed;
