@@ -2080,7 +2080,7 @@
 
 	#define MSG_RETRACT              "Ritrai"
 
-	#define MSG_MOVE_AXIS            "Muovi Asse"
+	#define MSG_MOVE_AXIS            "Muovi Assi"
 
 	#define MSG_PLATE_LEVEL_A 	 "Calib. Piano Auto"
         #define MSG_PLATE_LEVEL_M        "Calib. Piano Man."
@@ -2171,7 +2171,7 @@
 
 	#define MSG_REFRESH              "Aggiorna"
 
-	#define MSG_WATCH                "Guarda"
+	#define MSG_WATCH                "Menu principale"
 
 	#define MSG_PREPARE              "Prepara"
 
