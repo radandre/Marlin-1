@@ -483,7 +483,7 @@ void get_command()
         {
           strchr_pointer = strchr(cmdbuffer[bufindw], 'N');
           gcode_N = (strtol(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL, 10));
-          if(gcode_N != gcode_LastN+1 && (strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL) ) {
+          if(gcode_N != gcode_LastN+1 && (strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL) && cmdbuffer[bufindw][0] == 'N' ) {
             SERIAL_ERROR_START;
             SERIAL_ERRORPGM(MSG_ERR_LINE_NO);
             SERIAL_ERRORLN(gcode_LastN);
