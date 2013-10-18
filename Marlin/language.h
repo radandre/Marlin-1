@@ -2090,6 +2090,8 @@
         #define MSG_CHANGE_SINGLE 	 "Cambia Filo"
         #define MSG_LOAD_SINGLE          "Carica Filo"
 	#define MSG_SPEED                "Velocita'"
+        #define MSG_HOURS                "ore"
+        #define MSG_MINUTES              "minuti"
 
 	#define MSG_NOZZLE               "Ugello"
 
