@@ -483,7 +483,7 @@ void get_command()
         {
           strchr_pointer = strchr(cmdbuffer[bufindw], 'N');
           gcode_N = (strtol(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL, 10));
-          if(gcode_N != gcode_LastN+1 && (strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL) && cmdbuffer[bufindw][0] == 'N' ) {
+          if( (gcode_N != gcode_LastN+1) && ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
             SERIAL_ERROR_START;
             SERIAL_ERRORPGM(MSG_ERR_LINE_NO);
             SERIAL_ERRORLN(gcode_LastN);
@@ -493,34 +493,37 @@ void get_command()
             return;
           }
 
-          if(strchr(cmdbuffer[bufindw], '*') != NULL)
-          {
-            byte checksum = 0;
-            byte count = 0;
-            while(cmdbuffer[bufindw][count] != '*') checksum = checksum^cmdbuffer[bufindw][count++];
-            strchr_pointer = strchr(cmdbuffer[bufindw], '*');
+          // Checksum required with line numbers and line number updated only with M110
+          if ( ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
+            if(strchr(cmdbuffer[bufindw], '*') != NULL)
+            {
+              byte checksum = 0;
+              byte count = 0;
+              while(cmdbuffer[bufindw][count] != '*') checksum = checksum^cmdbuffer[bufindw][count++];
+              strchr_pointer = strchr(cmdbuffer[bufindw], '*');
 
-            if( (int)(strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL)) != checksum) {
+              if( (int)(strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL)) != checksum) {
+                SERIAL_ERROR_START;
+                SERIAL_ERRORPGM(MSG_ERR_CHECKSUM_MISMATCH);
+                SERIAL_ERRORLN(gcode_LastN);
+                FlushSerialRequestResend();
+                serial_count = 0;
+                return;
+              }
+              //if no errors, continue parsing
+            }
+            else {
               SERIAL_ERROR_START;
-              SERIAL_ERRORPGM(MSG_ERR_CHECKSUM_MISMATCH);
+              SERIAL_ERRORPGM(MSG_ERR_NO_CHECKSUM);
               SERIAL_ERRORLN(gcode_LastN);
               FlushSerialRequestResend();
               serial_count = 0;
               return;
             }
-            //if no errors, continue parsing
-          }
-          else
-          {
-            SERIAL_ERROR_START;
-            SERIAL_ERRORPGM(MSG_ERR_NO_CHECKSUM);
-            SERIAL_ERRORLN(gcode_LastN);
-            FlushSerialRequestResend();
-            serial_count = 0;
-            return;
+
+            gcode_LastN = gcode_N;
           }
 
-          gcode_LastN = gcode_N;
           //if no errors, continue parsing
         }
         else  // if we don't receive 'N' but still see '*'
@@ -572,18 +575,26 @@ void get_command()
 
   // Printing from memory
   if( utility.isprinting && serial_count == 0 ) {
+    char cbufdmy[128];
+    sprintf(cbufdmy,"b:%d", buflen );
+    SERIAL_ECHOLN( cbufdmy );
     while ( !utility.eof() && buflen < BUFSIZE ) {
       int16_t n=utility.get();
       serial_char = (char)n;
       //char cbufdmy[128];
       //sprintf( cbufdmy, "%d - (%d) %c", serial_count, serial_char, serial_char );
-      //SERIAL_ECHOLN( cbufdmy );
+      sprintf(cbufdmy,"%c", serial_char );
+      SERIAL_ECHOLN( cbufdmy );
       if(serial_char == '\n' ||
        serial_char == '\r' ||
        (serial_char == ':' && comment_mode == false) ||
        serial_count >= (MAX_CMD_SIZE - 1)||n==-1)
       {
+        sprintf(cbufdmy,"(%d) b:%d", serial_count, buflen );
+        SERIAL_ECHOLN( cbufdmy );
         if(utility.eof()){
+          sprintf(cbufdmy,"EOF" );
+           SERIAL_ECHOLN( cbufdmy );
           //SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
           //LCD_MESSAGEPGM(MSG_FILE_PRINTED);
           utility.printingHasFinished();
@@ -649,8 +660,6 @@ void get_command()
       comment_mode = false; //for new command
       serial_count = 0; //clear buffer
 	  
-	  // ??? Visualizza ilcomando corrente
-	  //sprintf_P(time, PSTR(cmdbuffer));
       //SERIAL_ECHO_START;
       //SERIAL_ECHOLN(time);
       //lcd_setstatus(time);
@@ -1096,10 +1105,6 @@ void process_commands()
      break;
      case 71: //M71
       {
-#ifdef SDSUPPORT
-        card.pauseSDPrint();
-#endif
-        // ??? - Perche' ?
         starpos = (strchr(strchr_pointer + 4,'*'));
         if(starpos!=NULL)
           *(starpos-1)='\0';
@@ -1135,10 +1140,6 @@ void process_commands()
           }
         }
         lcd_ForceStatusScreen(false);
-
-#ifdef SDSUPPORT
-        card.startFileprint();
-#endif
 
       }
 	 case 104: // M104

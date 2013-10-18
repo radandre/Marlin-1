@@ -43,6 +43,8 @@ public:
   MemReader();
   
   void startMemprint(const uint8_t nr);
+  void pauseMemPrint();
+  void resumeMemPrint();
   void getStatus();
   void printingHasFinished();
 

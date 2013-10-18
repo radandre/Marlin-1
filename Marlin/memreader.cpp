@@ -25,6 +25,17 @@ void MemReader::startMemprint(const uint8_t nr)
   }
 }
 
+void MemReader::pauseMemPrint( void )
+{
+   isprinting=false;
+}
+
+void MemReader::resumeMemPrint( void )
+{
+   isprinting=true;
+}
+
+
 /* ??? Check se serve */
 void MemReader::getStatus()
 {
