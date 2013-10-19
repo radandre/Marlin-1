@@ -8,8 +8,8 @@
 //User specified version info of this build to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to this build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H __DATE__ "20/09/2013" __TIME__ // build date and time
-#define STRING_CONFIG_H_AUTHOR "SHAREBOT NG" //Who made the changes.
+#define STRING_VERSION_CONFIG_H __DATE__ "15/10/2013" __TIME__ // build date and time
+#define STRING_CONFIG_H_AUTHOR "SHAREBOT NG2" //Who made the changes.
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
@@ -90,9 +90,13 @@
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan) (1k pullup)
 
 #define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 1
+#define TEMP_SENSOR_1 0
 #define TEMP_SENSOR_2 0
+<<<<<<< HEAD
 //#define TEMP_SENSOR_BED 1
+=======
+#define TEMP_SENSOR_BED 0
+>>>>>>> 8e72e4c641e24fe8b0a25ef91e1b9d6cb7b0c31f
 
 // Actual temperature must be close to target for this long before M109 returns success
 #define TEMP_RESIDENCY_TIME 10  // (seconds)
@@ -261,11 +265,11 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define min_software_endstops true //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  //If true, axis won't move to coordinates greater than the defined lengths below.
 // Travel limits after homing
-#define X_MAX_POS 230
+#define X_MAX_POS 260
 #define X_MIN_POS 0
 #define Y_MAX_POS 200
 #define Y_MIN_POS 0
-#define Z_MAX_POS 192
+#define Z_MAX_POS 210
 #define Z_MIN_POS 0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
@@ -277,22 +281,22 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 //#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
 
 //Manual homing switch locations:
-#define MANUAL_X_HOME_POS 230
+#define MANUAL_X_HOME_POS 260
 #define MANUAL_Y_HOME_POS 200
-#define MANUAL_Z_HOME_POS 192
+#define MANUAL_Z_HOME_POS 210
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {50*60, 50*60, 500, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {50*60, 50*60, 1000, 0}  // set the homing speeds (mm/min)
 
 // default settings
 
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400,96.2753}  // default steps per unit for ultimaker
-#define DEFAULT_MAX_FEEDRATE          {450, 450, 5, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {3000,3000,100,3000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_FEEDRATE          {450, 450, 17, 25}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {1000,1000,50,1000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
+#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
+#define DEFAULT_RETRACT_ACCELERATION  1000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
