@@ -483,6 +483,8 @@ void get_command()
         {
           strchr_pointer = strchr(cmdbuffer[bufindw], 'N');
           gcode_N = (strtol(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL, 10));
+          SERIAL_ERRORLN(gcode_LastN);
+          SERIAL_ERRORLN(gcode_N);
           if( (gcode_N != gcode_LastN+1) && ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
             SERIAL_ERROR_START;
             SERIAL_ERRORPGM(MSG_ERR_LINE_NO);
@@ -493,8 +495,13 @@ void get_command()
             return;
           }
 
+          // Line number updated with M110
+          if (strstr_P(cmdbuffer[bufindw], PSTR("M110")) != NULL ) {
+             gcode_LastN = gcode_N;
+          } else 
           // Checksum required with line numbers and line number updated only with M110
-          if ( ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
+          //if ( ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
+          if ( (cmdbuffer[bufindw][0] == 'N') ) {
             if(strchr(cmdbuffer[bufindw], '*') != NULL)
             {
               byte checksum = 0;
@@ -520,7 +527,6 @@ void get_command()
               serial_count = 0;
               return;
             }
-
             gcode_LastN = gcode_N;
           }
 
