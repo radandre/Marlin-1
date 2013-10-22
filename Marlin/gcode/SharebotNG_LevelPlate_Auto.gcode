@@ -3,7 +3,7 @@ M71 (Livella piano Z)
 G21 ; set units to millimeters
 T0
 G28 ;Home all axis
-G92 X240 Y190
+G92 X240 Y210
 M106 S127 ;EXTRUDER FAN ON
 G0 Z10
 G1 X200 Y200 F3000
