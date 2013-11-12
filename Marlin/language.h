@@ -2293,7 +2293,8 @@
 
 	#define MSG_ERR_STOPPED          "Stampante fermata a causa di errori. Risolvi l'errore e usa M999 per ripartire!. (Reset temperatura. Impostala prima di ripartire)"
 
-	#define MSG_RESEND               "Reinviato:"
+	// Non tradurre perche' gestito poi dai programmi
+	#define MSG_RESEND               "Resend: "
 
 	#define MSG_UNKNOWN_COMMAND      "Comando sconosciuto: \""
 
