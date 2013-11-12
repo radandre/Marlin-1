@@ -131,14 +131,16 @@
 
 	#define MSG_MOVE_AXIS "Move Axis"
 
-	#define MSG_PLATE_LEVEL "Level Plate"
-        #define MSG_LOAD_SINGLE "Load"
-        #define MSG_UNLOAD_SINGLE "Unload"
-	#define MSG_LOAD_LEFT "Load left"
-        #define MSG_UNLOAD_LEFT "Unload left"
-        #define MSG_LOAD_RIGHT "Load right"
-        #define MSG_UNLOAD_RIGHT "Unload right"
-	#define MSG_SPEED "Speed"
+	#define MSG_PLATE_LEVEL_A        "Level plate Auto "
+        #define MSG_PLATE_LEVEL_M        "Level plate Man. "
+        #define MSG_NOZZLES              "Nozzles Calib.   "
+        #define MSG_CHANGE_RIGHT         "Change Right Fil."
+        #define MSG_CHANGE_LEFT          "Change Left Fil. "
+        #define MSG_CHANGE_SINGLE        "Change Filament  "
+        #define MSG_LOAD_SINGLE          "Charge FIlament  "
+        #define MSG_SPEED                "Speed"
+        #define MSG_HOURS                "Hours"
+        #define MSG_MINUTES              "Minutes"
 
 	#define MSG_NOZZLE "Nozzle"
 
