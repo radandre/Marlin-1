@@ -66,6 +66,10 @@ float current_temperature_bed = 0.0;
   unsigned char fanSpeedSoftPwm;
 #endif
   
+#ifdef BABYSTEPPING
+  volatile int babystepsTodo[3]={0,0,0};
+#endif
+  
 //===========================================================================
 //=============================private variables============================
 //===========================================================================
@@ -244,7 +248,7 @@ void PID_autotune(float temp, int extruder, int ncycles)
               Kp = 0.6*Ku;
               Ki = 2*Kp/Tu;
               Kd = Kp*Tu/8;
-              SERIAL_PROTOCOLLNPGM(" Clasic PID ")
+              SERIAL_PROTOCOLLNPGM(" Clasic PID ");
               SERIAL_PROTOCOLPGM(" Kp: "); SERIAL_PROTOCOLLN(Kp);
               SERIAL_PROTOCOLPGM(" Ki: "); SERIAL_PROTOCOLLN(Ki);
               SERIAL_PROTOCOLPGM(" Kd: "); SERIAL_PROTOCOLLN(Kd);
@@ -436,10 +440,9 @@ void manage_heater()
           //K1 defined in Configuration.h in the PID settings
           #define K2 (1.0-K1)
           dTerm[e] = (Kd * (pid_input - temp_dState[e]))*K2 + (K1 * dTerm[e]);
-          temp_dState[e] = pid_input;
-
           pid_output = constrain(pTerm[e] + iTerm[e] - dTerm[e], 0, PID_MAX);
         }
+        temp_dState[e] = pid_input;
     #else 
           pid_output = constrain(target_temperature[e], 0, PID_MAX);
     #endif //PID_OPENLOOP
@@ -1273,7 +1276,26 @@ ISR(TIMER0_COMPB_vect)
        bed_max_temp_error();
     }
 #endif
-  }  
+  }
+  
+#ifdef BABYSTEPPING
+  for(uint8_t axis=0;axis<3;axis++)
+  {
+    int curTodo=babystepsTodo[axis]; //get rid of volatile for performance
+   
+    if(curTodo>0)
+    {
+      babystep(axis,/*fwd*/true);
+      babystepsTodo[axis]--; //less to do next time
+    }
+    else
+    if(curTodo<0)
+    {
+      babystep(axis,/*fwd*/false);
+      babystepsTodo[axis]++; //less to do next time
+    }
+  }
+#endif //BABYSTEPPING
 }
 
 #ifdef PIDTEMP

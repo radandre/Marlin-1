@@ -55,12 +55,5 @@ void MemReader::printingHasFinished()
     st_synchronize();
     quickStop();
     isprinting = false;
-    /* ???
-    if(SD_FINISHED_STEPPERRELEASE)
-    {
-        //finishAndDisableSteppers();
-        enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
-    }
-    */
     autotempShutdown();
 }
