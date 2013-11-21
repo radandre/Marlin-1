@@ -456,10 +456,19 @@ static void lcd_prepare_menu()
     MENU_ITEM(function, MSG_PLATE_LEVEL_M, lcd_ut_level_plate_m);
     //MENU_ITEM(function, MSG_NOZZLES, lcd_ut_nozzles);
 #if EXTRUDERS > 1
-    MENU_ITEM(function, MSG_CHANGE_RIGHT, lcd_ut_change_right);
-    MENU_ITEM(function, MSG_CHANGE_LEFT, lcd_ut_change_left);
+    if ( card.printingpaused ) {
+        MENU_ITEM(gcode, MSG_CHANGE_RIGHT, PSTR("M600 T0"));
+        MENU_ITEM(gcode, MSG_CHANGE_LEFT, PSTR("M600 T1"));
+    } else {
+        MENU_ITEM(function, MSG_CHANGE_RIGHT, lcd_ut_change_right);
+        MENU_ITEM(function, MSG_CHANGE_LEFT, lcd_ut_change_left);
+    }
 #else
-    MENU_ITEM(function, MSG_CHANGE_SINGLE, lcd_ut_change_right);
+    if ( card.printingpaused ) {
+        MENU_ITEM(gcode, MSG_CHANGE_RIGHT, PSTR("M600"));
+    } else {
+        MENU_ITEM(function, MSG_CHANGE_SINGLE, lcd_ut_change_right);
+    }
 #endif
     END_MENU();
 }
