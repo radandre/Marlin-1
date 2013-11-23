@@ -79,6 +79,7 @@
 
 // This defines the number of extruders
 #define EXTRUDERS 1
+//#define EXTRUDERS 2
 
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX
@@ -118,10 +119,23 @@
 // 52 is 200k thermistor - ATC Semitec 204GT-2 (1k pullup)
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan & J-Head) (1k pullup)
 
-#define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 0
-#define TEMP_SENSOR_2 0
-#define TEMP_SENSOR_BED 1
+#ifdef EXTRUDERS 1
+
+ #define TEMP_SENSOR_0 1
+ #define TEMP_SENSOR_1 0
+ #define TEMP_SENSOR_2 0
+ #define TEMP_SENSOR_BED 1
+
+#endif
+
+#ifdef EXTRUDERS 2
+
+ #define TEMP_SENSOR_0 1
+ #define TEMP_SENSOR_1 1
+ #define TEMP_SENSOR_2 0
+ #define TEMP_SENSOR_BED 1
+
+#endif
 
 // This makes temp sensor 1 a redundant sensor for sensor 0. If the temperatures difference between these sensors is to high the print will be aborted.
 //#define TEMP_SENSOR_1_AS_REDUNDANT
@@ -338,16 +352,18 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #endif
 
 // Travel limits after homing
-#define X_MAX_POS 260
-#define X_MIN_POS 0
-#define Y_MAX_POS 200
-#define Y_MIN_POS 0
-#define Z_MAX_POS 210
-#define Z_MIN_POS 0
+#ifdef EXTRUDERS 1
 
-#define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
-#define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
-#define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
+ #define X_MAX_POS 260
+ #define X_MIN_POS 0
+ #define Y_MAX_POS 200
+ #define Y_MIN_POS 0
+ #define Z_MAX_POS 206
+ #define Z_MIN_POS 0
+
+ #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
+ #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
+ #define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
 
 // The position of the homing switches
 //#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
@@ -355,10 +371,38 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 //Manual homing switch locations:
 // For deltabots this means top and center of the cartesian print volume.
-#define MANUAL_X_HOME_POS 260
-#define MANUAL_Y_HOME_POS 200
-#define MANUAL_Z_HOME_POS 210
+ #define MANUAL_X_HOME_POS 260
+ #define MANUAL_Y_HOME_POS 200
+ #define MANUAL_Z_HOME_POS 206
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
+
+#endif
+
+#ifdef EXTRUDERS 2
+ 
+ #define X_MAX_POS 230
+ #define X_MIN_POS 0
+ #define Y_MAX_POS 200
+ #define Y_MIN_POS 0
+ #define Z_MAX_POS 206
+ #define Z_MIN_POS 0
+
+ #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
+ #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
+ #define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
+
+// The position of the homing switches
+//#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
+//#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
+
+//Manual homing switch locations:
+// For deltabots this means top and center of the cartesian print volume.
+ #define MANUAL_X_HOME_POS 230
+ #define MANUAL_Y_HOME_POS 200
+ #define MANUAL_Z_HOME_POS 206
+//#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
+
+#endif
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
@@ -368,7 +412,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400,96.2753}  // default steps per unit for ultimaker
 #define DEFAULT_MAX_FEEDRATE          {450, 450, 17, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {1000,1000,50,1000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_ACCELERATION      {9000,9000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  1000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
@@ -376,8 +420,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
 // For the other hotends it is their distance from the extruder 0 hotend.
-#define EXTRUDER_OFFSET_X {0.0,-35.00} // (in mm) for each extruder, offset of the hotend on the X axis
-#define EXTRUDER_OFFSET_Y {0.0, 1.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
+#define EXTRUDER_OFFSET_X {0.0,-35.50} // (in mm) for each extruder, offset of the hotend on the X axis
+#define EXTRUDER_OFFSET_Y {0.0, 0.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instanteneously)
 #define DEFAULT_XYJERK                10.0    // (mm/sec)
