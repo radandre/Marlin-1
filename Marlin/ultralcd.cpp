@@ -267,7 +267,7 @@ static void lcd_main_menu()
     }else{
         MENU_ITEM(submenu, MSG_PREPARE, lcd_prepare_menu);
     }
-    MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
+    //MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
 #ifdef SDSUPPORT
     if (card.cardOK)
     {
