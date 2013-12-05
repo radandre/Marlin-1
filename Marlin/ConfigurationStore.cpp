@@ -4,6 +4,10 @@
 #include "ultralcd.h"
 #include "ConfigurationStore.h"
 
+#if EXTRUDERS > 1
+extern float extruder_offset[2][2];
+#endif
+
 void _EEPROM_writeData(int &pos, uint8_t* value, uint8_t size)
 {
     do
@@ -30,7 +34,7 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size)
 
 
 #define EEPROM_OFFSET 100
-
+#define SHAREBOT_EEPROM_OFFSET 50
 
 // IMPORTANT:  Whenever there are changes made to the variables stored in EEPROM
 // in the functions below, also increment the version number. This makes sure that
@@ -43,7 +47,8 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size)
 void Config_StoreSettings() 
 {
   char ver[4]= "000";
-  int i=EEPROM_OFFSET;
+  float dummy;
+  int i=EEPROM_OFFSET,idmy;
   EEPROM_WRITE_VAR(i,ver); // invalidate data first 
   EEPROM_WRITE_VAR(i,axis_steps_per_unit);  
   EEPROM_WRITE_VAR(i,max_feedrate);  
@@ -75,9 +80,9 @@ void Config_StoreSettings()
     EEPROM_WRITE_VAR(i,Ki);
     EEPROM_WRITE_VAR(i,Kd);
   #else
-		float dummy = 3000.0f;
+    dummy = 3000.0f;
     EEPROM_WRITE_VAR(i,dummy);
-		dummy = 0.0f;
+    dummy = 0.0f;
     EEPROM_WRITE_VAR(i,dummy);
     EEPROM_WRITE_VAR(i,dummy);
   #endif
@@ -85,6 +90,24 @@ void Config_StoreSettings()
     int lcd_contrast = 32;
   #endif
   EEPROM_WRITE_VAR(i,lcd_contrast);
+
+  // Sharebot parameters
+  i=SHAREBOT_EEPROM_OFFSET;
+#if EXTRUDERS > 1
+  EEPROM_WRITE_VAR( i, extruder_offset[X_AXIS][0] );
+  EEPROM_WRITE_VAR( i, extruder_offset[Y_AXIS][0] );
+
+  EEPROM_WRITE_VAR( i, extruder_offset[X_AXIS][1] );
+  EEPROM_WRITE_VAR( i, extruder_offset[Y_AXIS][1] );
+#else
+  dummy=0.0f;
+  EEPROM_WRITE_VAR( i, dummy );
+  EEPROM_WRITE_VAR( i, dummy );
+
+  EEPROM_WRITE_VAR( i, dummy );
+  EEPROM_WRITE_VAR( i, dummy );
+#endif
+
   char ver2[4]=EEPROM_VERSION;
   i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver2); // validate data
@@ -148,6 +171,23 @@ void Config_PrintSettings()
     SERIAL_ECHOPAIR(" Y" ,add_homeing[1] );
     SERIAL_ECHOPAIR(" Z" ,add_homeing[2] );
     SERIAL_ECHOLN("");
+
+#if EXTRUDERS > 1
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM("Extruders offset (mm):\n M218 T0");
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR(" X" ,extruder_offset[X_AXIS][0] );
+    SERIAL_ECHOPAIR(" Y" ,extruder_offset[Y_AXIS][0] );
+    SERIAL_ECHOLN("");
+
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM("Extruders offset (mm):\n M218 T1");
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR(" X" ,extruder_offset[X_AXIS][1] );
+    SERIAL_ECHOPAIR(" Y" ,extruder_offset[Y_AXIS][1] );
+    SERIAL_ECHOLN("");
+#endif
+
 #ifdef DELTA
     SERIAL_ECHO_START;
     SERIAL_ECHOLNPGM("Endstop adjustement (mm):");
@@ -222,8 +262,25 @@ void Config_RetrieveSettings()
         #endif
         EEPROM_READ_VAR(i,lcd_contrast);
 
-		// Call updatePID (similar to when we have processed M301)
-		updatePID();
+	// Call updatePID (similar to when we have processed M301)
+	updatePID();
+
+        // Sharebot settings
+        i=SHAREBOT_EEPROM_OFFSET;
+#if EXTRUDERS > 1
+        EEPROM_READ_VAR(i, extruder_offset[X_AXIS][0] );
+        EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][0] );
+
+        EEPROM_READ_VAR(i, extruder_offset[X_AXIS][1] );
+        EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][1] );
+#else
+        float ofdmy;
+        EEPROM_READ_VAR(i, ofdmy );
+        EEPROM_READ_VAR(i, ofdmy );
+        EEPROM_READ_VAR(i, ofdmy );
+        EEPROM_READ_VAR(i, ofdmy );
+#endif
+
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM("Stored settings retrieved");
     }
