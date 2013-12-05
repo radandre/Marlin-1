@@ -1,27 +1,30 @@
-G21 (set units to mm)
+M300
+M71 (Livella piano Z)
+G21 ; set units to millimeters
+T0
 G90 (set positioning to absolute)
-G28 (home all axes)
-M71 (Calibra piano)
+G28 ;Home all axis
+G28 X260
 G1 Z5 F3300.0
-G1 X15 Y100
+G1 X50 Y160
 G1 Z0
-M71 (Regola viti 1)
+M71 (Regola vite 1)
 G1 Z5 F3300.0
-G1 X100 Y185
+G1 X50 Y30
 G1 Z0
-M71 (Regola viti 2)
+M71 (Regola vite 2)
 G1 Z5 F3300.0
-G1 X185 Y100
+G1 X200 Y30
 G1 Z0
-M71 (Regola viti 3)
+M71 (Regola vite 3)
 G1 Z5 F3300.0
-G1 X100 Y15
+G1 X200 Y160
 G1 Z0
-M71 (Regola viti 4)
+M71 (Regola vite 4)
 G1 Z5 F3300.0
-G1 X100 Y100
+G1 X130 Y100
 G1 Z0
-M71 (Regola viti 5)
+M71 (Verifica viti)
 G1 Z10
 M117 Sharebot NG       
 M84
