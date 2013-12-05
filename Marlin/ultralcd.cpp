@@ -643,7 +643,7 @@ static void lcd_control_menu()
 #ifdef FWRETRACT
     MENU_ITEM(submenu, MSG_RETRACT, lcd_control_retract_menu);
 #endif
-#ifdef EEPROM_SETTINGS
+#ifdef EEPROM_SETTINGS_ENABLE
     MENU_ITEM(function, MSG_STORE_EPROM, Config_StoreSettings);
     MENU_ITEM(function, MSG_LOAD_EPROM, Config_RetrieveSettings);
 #endif
