@@ -216,7 +216,7 @@ M Codes
 *  M400 - Finish all moves
 *  M401 - Lower z-probe if present
 *  M402 - Raise z-probe if present
-*  M500 - stores paramters in EEPROM
+*  M500 - stores parameters in EEPROM
 *  M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
 *  M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 *  M503 - print the current settings (from memory not from eeprom)
