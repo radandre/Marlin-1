@@ -93,6 +93,8 @@ void Config_StoreSettings()
 
   // Sharebot parameters
   i=SHAREBOT_EEPROM_OFFSET;
+  EEPROM_WRITE_VAR( i, ver );
+
 #if EXTRUDERS > 1
   EEPROM_WRITE_VAR( i, extruder_offset[X_AXIS][0] );
   EEPROM_WRITE_VAR( i, extruder_offset[Y_AXIS][0] );
@@ -111,6 +113,8 @@ void Config_StoreSettings()
   char ver2[4]=EEPROM_VERSION;
   i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver2); // validate data
+  i=SHAREBOT_EEPROM_OFFSET;
+  EEPROM_WRITE_VAR(i,ver2);
   SERIAL_ECHO_START;
   SERIAL_ECHOLNPGM("Settings Stored");
 }
@@ -267,19 +271,25 @@ void Config_RetrieveSettings()
 
         // Sharebot settings
         i=SHAREBOT_EEPROM_OFFSET;
+        EEPROM_READ_VAR(i,stored_ver);
+        if (strncmp(ver,stored_ver,3) == 0)
+        {
 #if EXTRUDERS > 1
-        EEPROM_READ_VAR(i, extruder_offset[X_AXIS][0] );
-        EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][0] );
+            EEPROM_READ_VAR(i, extruder_offset[X_AXIS][0] );
+            EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][0] );
 
-        EEPROM_READ_VAR(i, extruder_offset[X_AXIS][1] );
-        EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][1] );
+            EEPROM_READ_VAR(i, extruder_offset[X_AXIS][1] );
+            EEPROM_READ_VAR(i, extruder_offset[Y_AXIS][1] );
 #else
-        float ofdmy;
-        EEPROM_READ_VAR(i, ofdmy );
-        EEPROM_READ_VAR(i, ofdmy );
-        EEPROM_READ_VAR(i, ofdmy );
-        EEPROM_READ_VAR(i, ofdmy );
+            float ofdmy;
+            EEPROM_READ_VAR(i, ofdmy );
+            EEPROM_READ_VAR(i, ofdmy );
+            EEPROM_READ_VAR(i, ofdmy );
+            EEPROM_READ_VAR(i, ofdmy );
 #endif
+            SERIAL_ECHO_START;
+            SERIAL_ECHOLNPGM("Sharebot stored settings retrieved");
+         }
 
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM("Stored settings retrieved");
@@ -345,6 +355,12 @@ void Config_ResetDefault()
 #endif//PID_ADD_EXTRUSION_RATE
 #endif//PIDTEMP
 
+#if EXTRUDERS > 1
+    extruder_offset[X_AXIS][0]=0.0f;
+    extruder_offset[Y_AXIS][0]=0.0f;
+    extruder_offset[X_AXIS][1]=0.0f;
+    extruder_offset[Y_AXIS][1]=0.0f;
+#endif
 SERIAL_ECHO_START;
 SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
 
