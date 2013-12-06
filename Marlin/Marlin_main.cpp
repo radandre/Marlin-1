@@ -334,6 +334,7 @@ void enquecommand(const char *cmd)
     SERIAL_ECHOPGM("enqueing \"");
     SERIAL_ECHO(cmdbuffer[bufindw]);
     SERIAL_ECHOLNPGM("\"");
+    fromsd[bufindw] = true;
     bufindw= (bufindw + 1)%BUFSIZE;
     buflen += 1;
   }
@@ -349,6 +350,7 @@ void enquecommand_P(const char *cmd)
     SERIAL_ECHOPGM("enqueing \"");
     SERIAL_ECHO(cmdbuffer[bufindw]);
     SERIAL_ECHOLNPGM("\"");
+    fromsd[bufindw] = true;
     bufindw= (bufindw + 1)%BUFSIZE;
     buflen += 1;
   }
@@ -588,7 +590,8 @@ void get_command()
                 serial_count = 0;
                 return;
               }
-              //if no errors, continue parsing
+              //if no errors drop the checksum and continue parsing (check pos-1)
+              //*strchr_pointer=0x00;
             }
             else {
               SERIAL_ERROR_START;
