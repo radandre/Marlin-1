@@ -7,8 +7,6 @@
 
 #ifdef SDSUPPORT
 
-
-
 CardReader::CardReader()
 {
    filesize = 0;
@@ -631,6 +629,7 @@ void CardReader::printingHasFinished()
       file.close();
       sdprinting = false;
       printingpaused = false;
+      force_temp = false;
       if(SD_FINISHED_STEPPERRELEASE)
       {
           //finishAndDisableSteppers();

@@ -235,6 +235,13 @@ int EtoPPressure=0;
 float delta[3] = {0.0, 0.0, 0.0};
 #endif
 
+// Force parameters for beginners
+boolean force_temp = false;
+float forced_M104;
+float forced_M106;
+float forced_M109;
+float forced_M190;
+
 //===========================================================================
 //=============================private variables=============================
 //===========================================================================
@@ -1687,7 +1694,14 @@ void process_commands()
       if(setTargetedHotend(104)){
         break;
       }
-      if (code_seen('S')) setTargetHotend(code_value(), tmp_extruder);
+      if (code_seen('S')) {
+        if ( force_temp ) {
+          setTargetHotend( forced_M104, tmp_extruder);
+        }
+        else {
+          setTargetHotend(code_value(), tmp_extruder);
+        }
+      }
 #ifdef DUAL_X_CARRIAGE
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && tmp_extruder == 0)
         setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
@@ -1761,22 +1775,41 @@ void process_commands()
         autotemp_enabled=false;
       #endif
       if (code_seen('S')) {
-        setTargetHotend(code_value(), tmp_extruder);
+        if ( force_temp && ( code_value() != 0.0 )) {
+          setTargetHotend(forced_M109, tmp_extruder);
+        } else {
+          setTargetHotend(code_value(), tmp_extruder);
+        }
+
 #ifdef DUAL_X_CARRIAGE
         if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && tmp_extruder == 0)
-          setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
+          if ( force_temp && ( code_value() != 0.0 ) ) {
+            setTargetHotend1(forced_M109 == 0.0 ? 0.0 : forced_M109 + duplicate_extruder_temp_offset);
+          } else {
+            setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
+          }
 #endif          
         CooldownNoWait = true;
       } else if (code_seen('R')) {
         setTargetHotend(code_value(), tmp_extruder);
 #ifdef DUAL_X_CARRIAGE
         if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && tmp_extruder == 0)
-          setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
+          if ( force_temp && ( code_value() != 0.0 ) ) {
+            setTargetHotend1(forced_M109 == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
+          } else {
+            setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
+          }
 #endif          
         CooldownNoWait = false;
       }
       #ifdef AUTOTEMP
-        if (code_seen('S')) autotemp_min=code_value();
+        if (code_seen('S')) {
+          if ( force_temp && ( code_value() != 0.0 ) ) {
+            autotemp_min=forced_M109;
+          } else { 
+            autotemp_min=code_value();
+          }
+        }
         if (code_seen('B')) autotemp_max=code_value();
         if (code_seen('F'))
         {
@@ -1846,10 +1879,18 @@ void process_commands()
     #if defined(TEMP_BED_PIN) && TEMP_BED_PIN > -1
         LCD_MESSAGEPGM(MSG_BED_HEATING);
         if (code_seen('S')) {
-          setTargetBed(code_value());
+          if ( force_temp && ( code_value() != 0.0 ) ) {
+            setTargetBed( forced_M190 );
+          } else {
+            setTargetBed(code_value());
+          }
           CooldownNoWait = true;
         } else if (code_seen('R')) {
-          setTargetBed(code_value());
+          if  ( force_temp && ( code_value() != 0.0 ) ) {
+            setTargetBed( forced_M109 );
+          } else {
+            setTargetBed(code_value());
+          }
           CooldownNoWait = false;
         }
         codenum = millis();
@@ -1882,7 +1923,11 @@ void process_commands()
     #if defined(FAN_PIN) && FAN_PIN > -1
       case 106: //M106 Fan On
         if (code_seen('S')){
-           fanSpeed=constrain(code_value(),0,255);
+           if ( force_temp && ( code_value() != 0 ) ) {
+             fanSpeed=constrain(forced_M106,0,255);
+           } else {
+             fanSpeed=constrain(code_value(),0,255);
+           }
         }
         else {
           fanSpeed=255;

@@ -226,6 +226,12 @@ extern float retract_length, retract_feedrate, retract_zlift;
 extern float retract_recover_length, retract_recover_feedrate;
 #endif
 
+extern boolean force_temp;
+extern float forced_M104;
+extern float forced_M106;
+extern float forced_M109;
+extern float forced_M190;
+
 extern unsigned long starttime;
 extern unsigned long stoptime;
 

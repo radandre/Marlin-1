@@ -66,6 +66,7 @@ static void lcd_set_contrast();
 #endif
 static void lcd_control_retract_menu();
 static void lcd_sdcard_menu();
+static void lcd_sdprint_settings();
 
 static void lcd_quick_feedback();//Cause an LCD refresh, and give the user visual or audiable feedback that something has happend
 
@@ -279,7 +280,7 @@ static void lcd_main_menu()
                 MENU_ITEM(function, MSG_RESUME_PRINT, lcd_sdcard_resume);
             MENU_ITEM(function, MSG_STOP_PRINT, lcd_sdcard_stop);
         }else{
-            MENU_ITEM(submenu, MSG_CARD_MENU, lcd_sdcard_menu);
+            MENU_ITEM(submenu, MSG_CARD_MENU, lcd_sdprint_settings);
 #if SDCARDDETECT < 1
             MENU_ITEM(gcode, MSG_CNG_SDCARD, PSTR("M21"));  // SD-card changed by user
 #endif
@@ -802,6 +803,43 @@ static void lcd_sd_updir()
     currentMenuViewOffset = 0;
 }
 
+void lcd_sdprint_pla()
+{
+    force_temp = true;
+    forced_M104 = 220.0;
+    forced_M109 = 220.0;
+    forced_M106 = 255.0;
+    forced_M190 = 50.0;
+    lcd_sdcard_menu();
+}
+
+void lcd_sdprint_abs()
+{
+    force_temp = true;
+    forced_M104 = 230.0;
+    forced_M109 = 230.0;
+    forced_M106 = 125.0;
+    forced_M190 = 90.0;
+    lcd_sdcard_menu();
+}
+
+void lcd_sdprint_none()
+{
+    force_temp = false;
+    lcd_sdcard_menu();
+}
+
+void lcd_sdprint_settings()
+{
+    force_temp = false;
+    START_MENU();
+    MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
+    MENU_ITEM(submenu, "Normale", lcd_sdprint_none );
+    MENU_ITEM(submenu, "PLA", lcd_sdprint_pla );
+    MENU_ITEM(submenu, "ABS", lcd_sdprint_abs );
+    END_MENU();
+}
+
 void lcd_sdcard_menu()
 {
     if (lcdDrawUpdate == 0 && LCD_CLICKED == 0) 
@@ -1182,7 +1220,13 @@ void lcd_setstatus(const char* message)
 {
     if (lcd_status_message_level > 0)
         return;
-    strncpy(lcd_status_message, message, LCD_WIDTH);
+    if (force_temp) {
+      strncpy(lcd_status_message+2, message, LCD_WIDTH-2);
+      lcd_status_message[0]='F';
+      lcd_status_message[1]='-';
+    } else {
+      strncpy(lcd_status_message, message, LCD_WIDTH);
+    }
     lcdDrawUpdate = 2;
 }
 void lcd_setstatuspgm(const char* message)
