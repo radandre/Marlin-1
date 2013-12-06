@@ -119,7 +119,7 @@
 // 52 is 200k thermistor - ATC Semitec 204GT-2 (1k pullup)
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan & J-Head) (1k pullup)
 
-#ifdef EXTRUDERS 1
+#if EXTRUDERS == 1
 
  #define TEMP_SENSOR_0 1
  #define TEMP_SENSOR_1 0
@@ -128,7 +128,7 @@
 
 #endif
 
-#ifdef EXTRUDERS 2
+#if EXTRUDERS == 2
 
  #define TEMP_SENSOR_0 1
  #define TEMP_SENSOR_1 1
@@ -352,7 +352,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #endif
 
 // Travel limits after homing
-#ifdef EXTRUDERS 1
+#if EXTRUDERS == 1
 
  #define X_MAX_POS 260
  #define X_MIN_POS 0
@@ -378,7 +378,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 #endif
 
-#ifdef EXTRUDERS 2
+#if EXTRUDERS == 2
  
  #define X_MAX_POS 230
  #define X_MIN_POS 0
