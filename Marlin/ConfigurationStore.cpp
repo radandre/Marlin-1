@@ -178,16 +178,14 @@ void Config_PrintSettings()
 
 #if EXTRUDERS > 1
     SERIAL_ECHO_START;
-    SERIAL_ECHOLNPGM("Extruders offset (mm):\n M218 T0");
+    SERIAL_ECHOLNPGM("Extruders offset (mm):");
     SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR(" X" ,extruder_offset[X_AXIS][0] );
+    SERIAL_ECHOPAIR("  M218 T0 X" ,extruder_offset[X_AXIS][0] );
     SERIAL_ECHOPAIR(" Y" ,extruder_offset[Y_AXIS][0] );
     SERIAL_ECHOLN("");
 
     SERIAL_ECHO_START;
-    SERIAL_ECHOLNPGM("Extruders offset (mm):\n M218 T1");
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR(" X" ,extruder_offset[X_AXIS][1] );
+    SERIAL_ECHOPAIR("  M218 T1 X" ,extruder_offset[X_AXIS][1] );
     SERIAL_ECHOPAIR(" Y" ,extruder_offset[Y_AXIS][1] );
     SERIAL_ECHOLN("");
 #endif
