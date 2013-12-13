@@ -196,7 +196,6 @@ extern volatile uint16_t buttons;  //an extended version of the last checked but
   #define LCD_CLASS LiquidCrystal_SR
   LCD_CLASS lcd(SR_DATA_PIN, SR_CLK_PIN);
 
->>>>>>> upstream/Marlin_v1
 #else
   // Standard directly connected LCD implementations
   #if LANGUAGE_CHOICE == 6
