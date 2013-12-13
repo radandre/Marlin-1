@@ -1116,9 +1116,8 @@ void lcd_init()
 void lcd_update()
 {
     static unsigned long timeoutToStatus = 0;
+    static int myinit=0;
     
-    lcd_implementation_init();
-
     lcd_buttons_update();
     
     #ifdef LCD_HAS_SLOW_BUTTONS
@@ -1130,7 +1129,7 @@ void lcd_update()
     {
         lcdDrawUpdate = 2;
         lcd_oldcardstatus = IS_SD_INSERTED;
-        //lcd_implementation_init(); // to maybe revive the lcd if static electricty killed it.
+        lcd_implementation_init(); // to maybe revive the lcd if static electricty killed it.
         
         if(lcd_oldcardstatus)
         {
@@ -1195,7 +1194,7 @@ void lcd_update()
             (*currentMenu)();
             if (!lcdDrawUpdate)  break; // Terminate display update, when nothing new to draw. This must be done before the last dogm.next()
         } while( u8g.nextPage() );
-#else        
+#else
         (*currentMenu)();
 #endif
 
