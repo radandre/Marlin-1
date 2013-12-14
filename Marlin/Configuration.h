@@ -358,7 +358,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define X_MIN_POS 0
  #define Y_MAX_POS 200
  #define Y_MIN_POS 0
- #define Z_MAX_POS 206
+ #define Z_MAX_POS 204
  #define Z_MIN_POS 0
 
  #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
@@ -373,7 +373,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // For deltabots this means top and center of the cartesian print volume.
  #define MANUAL_X_HOME_POS 260
  #define MANUAL_Y_HOME_POS 200
- #define MANUAL_Z_HOME_POS 206
+ #define MANUAL_Z_HOME_POS 204
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
 
 #endif
@@ -384,7 +384,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define X_MIN_POS 0
  #define Y_MAX_POS 200
  #define Y_MIN_POS 0
- #define Z_MAX_POS 206
+ #define Z_MAX_POS 204
  #define Z_MIN_POS 0
 
  #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
@@ -399,7 +399,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // For deltabots this means top and center of the cartesian print volume.
  #define MANUAL_X_HOME_POS 230
  #define MANUAL_Y_HOME_POS 200
- #define MANUAL_Z_HOME_POS 206
+ #define MANUAL_Z_HOME_POS 204
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
 
 #endif
