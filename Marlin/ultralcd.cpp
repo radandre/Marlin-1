@@ -251,6 +251,7 @@ static void lcd_sdcard_stop()
     card.sdprinting = false;
     card.closefile();
     quickStop();
+    lcd_cooldown();
     enquecommand_P((PSTR("G28"))); // move all axis home
     if(SD_FINISHED_STEPPERRELEASE)
     {

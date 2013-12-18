@@ -493,7 +493,7 @@
     #define CONTROLLERFAN_PIN  10 //Pin used for the fan to cool controller
   #endif
 
-  #define PS_ON_PIN          12
+  #define PS_ON_PIN          -1 // Default disabled for Sharebot
 
   #if defined(REPRAP_DISCOUNT_SMART_CONTROLLER) || defined(G3D_PANEL)
     #define KILL_PIN           41
