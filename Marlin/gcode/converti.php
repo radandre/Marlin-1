@@ -10,6 +10,7 @@ foreach ( $names as $pos=>$name ) {
 	$var_name=$vars[$pos];
 	$output=$out[$pos];
 	echo "$pos - $name -> $output ( $var_name)\n";
+        $comment=false;
 	$fp=fopen( $name, "rb" );
 	$fpw=fopen( $output, "w+b" );
 	$first=true;
@@ -23,20 +24,29 @@ foreach ( $names as $pos=>$name ) {
 		fwrite ( $fpw, "static uint8_t ".$var_name."[] = {" );
   	 	while ( !feof($fp) ) {
       			$c = fgetc($fp);
+                        if ( $c == ';' ) { 
+                           $comment = TRUE;
+                        }
+                        if ( $c == "\n" ) {
+                           $comment = FALSE;
+                        }
+                        if ( ( $comment ) || ( $c == "\r" ) )
+                           continue;
       			$cnt++;
       			if ( $cnt == 1 )
          			$first=false;
       			else {
-         			echo ",";
+         			#echo ",";
 				fwrite ( $fpw, "," );
 			}
-      			echo ord($c);
+      			#echo ord($c);
+                        echo $c;
 			fwrite ( $fpw, ord($c) );
    		}
-   		echo "};\n";
+   		echo ",13 };\n";
 		fwrite ( $fpw, "};\n" );
-   		echo "#define ".$var_name."_LENGTH ".($cnt-1)."\n";
-		fwrite ( $fpw, "#define ".$var_name."_LENGTH ".($cnt-1)."\n" );
+   		echo "#define ".$var_name."_LENGTH ".($cnt)."\n";
+		fwrite ( $fpw, "#define ".$var_name."_LENGTH ".($cnt)."\n" );
    		echo "#endif\n";
 		fwrite ( $fpw, "#endif\n" );
 	}

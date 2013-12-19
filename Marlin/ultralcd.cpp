@@ -47,6 +47,7 @@ static void lcd_ut_level_plate_m();
 static void lcd_ut_change_right();
 static void lcd_ut_change_left();
 static void lcd_ut_nozzles();
+static void lcd_cooldown();
 
 /* Different menus */
 static void lcd_status_screen();
