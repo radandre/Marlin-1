@@ -174,6 +174,7 @@
 //===========================================================================
 //=============================imported variables============================
 //===========================================================================
+char cbufdmy[128]; // cancellare la riga
 
 
 //===========================================================================
@@ -667,17 +668,20 @@ void get_command()
     return;
     
   if( utility.isprinting && serial_count == 0 ) {
+        
     while ( !utility.eof() && buflen < BUFSIZE ) {
       int16_t n=utility.get();
       serial_char = (char)n;
 
       if(serial_char == '\n' ||
-       serial_char == '\r' ||
+       serial_char == 0x00 ||
        (serial_char == ':' && comment_mode == false) ||
        serial_count >= (MAX_CMD_SIZE - 1)||n==-1)
       {
+        
         if(utility.eof()){
-          SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
+          //SERIAL_ECHO_START;
+          //SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
           //LCD_MESSAGEPGM(MSG_FILE_PRINTED);
           utility.printingHasFinished();
         }
@@ -687,7 +691,7 @@ void get_command()
           return; //if empty line
         }
         cmdbuffer[bufindw][serial_count] = 0; //terminate string
-        fromsd[bufindw] = true; // Non rimanda comandi sulla seriale ( verificare ???)
+        fromsd[bufindw] = true; // No serial response
         buflen += 1;
         bufindw = (bufindw + 1)%BUFSIZE;
         comment_mode = false;
@@ -696,7 +700,16 @@ void get_command()
         if(serial_char == ';') comment_mode = true;
         if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
       }
-    }  
+    }
+
+#ifdef SBT_DEBUG
+    if ( serial_count!=0) {
+      sprintf(cbufdmy, "Incomplete line:'%s'", cmdbuffer[bufindw]);
+      SERIAL_ECHO_START;
+      SERIAL_ECHOLN(cbufdmy);
+      serial_count=0;
+    }
+#endif
   }
 
   #ifdef SDSUPPORT

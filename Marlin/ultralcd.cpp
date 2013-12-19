@@ -250,6 +250,7 @@ static void lcd_sdcard_resume()
 static void lcd_sdcard_stop()
 {
     card.sdprinting = false;
+    card.printingpaused = false;
     card.closefile();
     quickStop();
     lcd_cooldown();

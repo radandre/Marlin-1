@@ -15,6 +15,7 @@ foreach ( $names as $pos=>$name ) {
 	$fpw=fopen( $output, "w+b" );
 	$first=true;
 	$cnt=0;
+        $cnt_riga=0;
 	if ( $fp != NULL ) {
    		echo "#ifndef SC_".$var_name."\n";
 		fwrite ( $fpw, "#ifndef SC_".$var_name."\n" );
@@ -29,10 +30,16 @@ foreach ( $names as $pos=>$name ) {
                         }
                         if ( $c == "\n" ) {
                            $comment = FALSE;
+                           /* Se ci sono due righe vuote non salva la seconda */
+                           if ( $cnt_riga == 0 )
+                              continue;
+                           $cnt_riga=-1;
                         }
-                        if ( ( $comment ) || ( $c == "\r" ) )
+                        if ( ( $comment ) || ( $c == "\r" ) || ( ord($c) == 0x00 ) )
                            continue;
       			$cnt++;
+                        $cnt_riga++;
+                        $last=$c;
       			if ( $cnt == 1 )
          			$first=false;
       			else {
@@ -43,10 +50,20 @@ foreach ( $names as $pos=>$name ) {
                         echo $c;
 			fwrite ( $fpw, ord($c) );
    		}
-   		echo ",13 };\n";
-		fwrite ( $fpw, "};\n" );
-   		echo "#define ".$var_name."_LENGTH ".($cnt)."\n";
-		fwrite ( $fpw, "#define ".$var_name."_LENGTH ".($cnt)."\n" );
+
+                // Se l'ultima riga non termina con LF lo aggiunge
+                if ( ord($last) != 10 ) {
+   		   echo ",10,0 };\n";
+		   fwrite ( $fpw, ",10,0 };\n" );
+                   echo "#define ".$var_name."_LENGTH ".($cnt+1)."\n";
+                   fwrite ( $fpw, "#define ".$var_name."_LENGTH ".($cnt+1)."\n" );
+                } else {
+                   $add=1;
+                   echo ",0 };\n";
+                   fwrite ( $fpw, ",0 };\n" );
+                   echo "#define ".$var_name."_LENGTH ".($cnt)."\n";
+                   fwrite ( $fpw, "#define ".$var_name."_LENGTH ".($cnt)."\n" );
+                }
    		echo "#endif\n";
 		fwrite ( $fpw, "#endif\n" );
 	}
