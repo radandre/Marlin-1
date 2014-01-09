@@ -838,7 +838,8 @@ void lcd_sdprint_settings()
 {
     force_temp = false;
     START_MENU();
-    MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
+    //MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
+    MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
     MENU_ITEM(submenu, "Normale", lcd_sdprint_none );
     MENU_ITEM(submenu, "PLA", lcd_sdprint_pla );
     MENU_ITEM(submenu, "ABS", lcd_sdprint_abs );
