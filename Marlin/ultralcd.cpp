@@ -823,7 +823,7 @@ void lcd_sdprint_abs()
     force_temp = true;
     forced_M104 = 230.0;
     forced_M109 = 230.0;
-    forced_M106 = 125.0;
+    forced_M106 = 200.0;
     forced_M190 = 90.0;
     lcd_sdcard_menu();
 }
