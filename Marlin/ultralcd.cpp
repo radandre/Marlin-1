@@ -254,7 +254,7 @@ static void lcd_sdcard_stop()
     card.closefile();
     quickStop();
     lcd_cooldown();
-    enquecommand_P((PSTR("G28"))); // move all axis home
+    enquecommand_P((PSTR("G0 X0 Y0 Z200"))); // move all axis home
     if(SD_FINISHED_STEPPERRELEASE)
     {
         enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
