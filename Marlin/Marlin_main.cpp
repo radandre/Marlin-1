@@ -1905,7 +1905,7 @@ void process_commands()
           CooldownNoWait = true;
         } else if (code_seen('R')) {
           if  ( force_temp && ( code_value() != 0.0 ) ) {
-            setTargetBed( forced_M109 );
+            setTargetBed( forced_M190 );
           } else {
             setTargetBed(code_value());
           }
