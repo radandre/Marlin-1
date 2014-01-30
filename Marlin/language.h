@@ -26,15 +26,12 @@
 #if MOTHERBOARD == 34 || MOTHERBOARD == 34
 	#define MACHINE_NAME "SHAREBOT NG "
 	#define FIRMWARE_URL "http://www.sharebot.it"
+#if MOTHERBOARD == 80 || MOTHERBOARD == 80
+	#define MACHINE_NAME "SHAREBOT NG 0.3"
+	#define FIRMWARE_URL "http://www.sharebot.it"
 #elif MOTHERBOARD == 7 || MOTHERBOARD == 71
 	#define MACHINE_NAME "Ultimaker"
 	#define FIRMWARE_URL "http://firmware.ultimaker.com"
-#elif MOTHERBOARD == 80
-	#define MACHINE_NAME "Rumba"
-	#define FIRMWARE_URL "https://github.com/ErikZalm/Marlin/"
-#elif MOTHERBOARD == 77
-	#define MACHINE_NAME "3Drag"
-	#define FIRMWARE_URL "http://3dprint.elettronicain.it/"
 #else
 	#ifdef CUSTOM_MENDEL_NAME
 		#define MACHINE_NAME CUSTOM_MENDEL_NAME
