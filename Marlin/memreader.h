@@ -6,8 +6,18 @@
 //Length=13 ( 1 in meno dello 0 finale )
 /*static uint8_t LEVEL_PLATE[] = { 'M', '7', '1', ' ', '(', 'p', 'i', 'p', 'p', 'o', ')', 0xd, 0x0d, 0x00 };*/
 
+#include "language.h"
+
+#if LANGUAGE_CHOICE == 7
 #include "sc_level_plate_a.h"
 #include "sc_level_plate_m.h"
+#endif
+
+#if LANGUAGE_CHOICE == 1 
+#include "sc_level_plate_a.h"
+#include "sc_level_plate_m.h"
+#endif
+
 #include "sc_change_left.h"
 #include "sc_change_right.h"
 #include "sc_nozzles.h"
