@@ -18,7 +18,7 @@
 // 9  Finnish
 
 #ifndef LANGUAGE_CHOICE
-#define LANGUAGE_CHOICE 7  // Pick your language from the list above
+#define LANGUAGE_CHOICE 1  // Pick your language from the list above
 #endif
 
 #define PROTOCOL_VERSION "1.0"
@@ -26,7 +26,7 @@
 #if MOTHERBOARD == 34 || MOTHERBOARD == 34
 	#define MACHINE_NAME "SHAREBOT NG "
 	#define FIRMWARE_URL "http://www.sharebot.it"
-#if MOTHERBOARD == 80 || MOTHERBOARD == 80
+#elif MOTHERBOARD == 80 || MOTHERBOARD == 80
 	#define MACHINE_NAME "SHAREBOT NG 0.3"
 	#define FIRMWARE_URL "http://www.sharebot.it"
 #elif MOTHERBOARD == 7 || MOTHERBOARD == 71

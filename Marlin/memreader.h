@@ -11,9 +11,10 @@
 #if LANGUAGE_CHOICE == 7
 #include "sc_level_plate_a.h"
 #include "sc_level_plate_m.h"
-#endif
-
-#if LANGUAGE_CHOICE == 1 
+#elif LANGUAGE_CHOICE == 1 
+#include "sc_level_plate_a_en.h"
+#include "sc_level_plate_m_en.h"
+#else
 #include "sc_level_plate_a.h"
 #include "sc_level_plate_m.h"
 #endif
