@@ -16,7 +16,7 @@
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
-#define STRING_CONFIG_H_AUTHOR "SHAREBOT NG2" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "SHAREBOT NG3" // Who made the changes.
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
@@ -67,7 +67,7 @@
 // 301 = Rambo
 
 #ifndef MOTHERBOARD
-#define MOTHERBOARD 34
+   #define MOTHERBOARD 80
 #endif
 
 // Define this to set a custom name for your generic Mendel,
@@ -78,8 +78,10 @@
 // #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
 // This defines the number of extruders
-#define EXTRUDERS 1
+#ifndef EXTRUDERS
+   #define EXTRUDERS 1
 //#define EXTRUDERS 2
+#endif
 
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX
@@ -299,7 +301,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DISABLE_X false
 #define DISABLE_Y false
 #define DISABLE_Z false
-#define DISABLE_E true // For all extruders
+#define DISABLE_E false // For all extruders
 
 #define INVERT_X_DIR true    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR true    // for Mendel set to true, for Orca set to false
@@ -313,6 +315,12 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define X_HOME_DIR 1
 #define Y_HOME_DIR 1
 #define Z_HOME_DIR 1
+
+#if MOTHERBOARD == 34
+#define Z_HOME_DIR 1
+#elif MOTHERBOARD == 80
+#define Z_HOME_DIR -1
+#endif
 
 #define min_software_endstops true // If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops true  // If true, axis won't move to coordinates greater than the defined lengths below.
@@ -361,6 +369,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define Z_MAX_POS 210
  #define Z_MIN_POS 0
 
+ #if MOTHERBOARD == 80
+    #define Z_MAX_POS 206
+ #endif
+
  #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
  #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
  #define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
@@ -374,6 +386,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define MANUAL_X_HOME_POS 260
  #define MANUAL_Y_HOME_POS 200
  #define MANUAL_Z_HOME_POS 210
+ #if MOTHERBOARD == 80
+   #define MANUAL_Z_HOME_POS 206
+ #endif
+
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
 
 #endif
@@ -386,6 +402,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define Y_MIN_POS 0
  #define Z_MAX_POS 210
  #define Z_MIN_POS 0
+
+ #if MOTHERBOARD == 80
+   #define MANUAL_Z_HOME_POS 206
+ #endif
 
  #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
  #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
@@ -400,6 +420,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
  #define MANUAL_X_HOME_POS 230
  #define MANUAL_Y_HOME_POS 200
  #define MANUAL_Z_HOME_POS 210
+ #if MOTHERBOARD == 80
+   #define MANUAL_Z_HOME_POS 206
+ #endif
+
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
 
 #endif
@@ -411,11 +435,11 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // default settings
 
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,400,96.2753}  // default steps per unit for ultimaker
-#define DEFAULT_MAX_FEEDRATE          {450, 450, 17, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {9000,9000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_FEEDRATE          {300, 300, 19, 35}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {2000,2000,100,2000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  1000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
+#define DEFAULT_ACCELERATION          800    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
+#define DEFAULT_RETRACT_ACCELERATION  800   // X, Y, Z and E max acceleration in mm/s^2 for retracts
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
@@ -424,7 +448,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define EXTRUDER_OFFSET_Y {0.0, 0.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instanteneously)
-#define DEFAULT_XYJERK                10.0    // (mm/sec)
+#define DEFAULT_XYJERK                20.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 

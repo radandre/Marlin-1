@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_ADV_H
 #define CONFIGURATION_ADV_H
 
+#include "Configuration.h"
 //===========================================================================
 //=============================Thermal Settings  ============================
 //===========================================================================
@@ -63,6 +64,11 @@
 //and turn off after the set amount of seconds from last driver being disabled again
 #define CONTROLLERFAN_PIN -1 //Pin used for the fan to cool controller (-1 to disable)
 #define CONTROLLERFAN_SECS 60 //How many seconds, after all motors were disabled, the fan should run
+#if MOTHERBOARD == 80
+  #define  CONTROLLERFAN_PIN 8
+  #define CONTROLLERFAN_SECS 120
+#endif
+
 #define CONTROLLERFAN_SPEED 255  // == full speed
 
 // When first starting the main fan, run it at full speed for the
@@ -248,7 +254,7 @@
 // Frequency limit
 // See nophead's blog for more info
 // Not working O
-#define XY_FREQUENCY_LIMIT  15
+#define XY_FREQUENCY_LIMIT  10
 
 // Minimum planner junction speed. Sets the default minimum speed the planner plans for at the end
 // of the buffer and all stops. This should not be much greater than zero and should only be changed
