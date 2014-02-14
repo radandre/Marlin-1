@@ -1346,7 +1346,7 @@
 #define FAN_PIN2           8 // IO pin. Buffer needed
 #define FAN_TO_FAN2 // If enabled FAN_PIN2 acts exactly like FAN_PIN
 
-#define PS_ON_PIN          45
+#define PS_ON_PIN          -1
 #define KILL_PIN           46
 
 #if (TEMP_SENSOR_0==0)
