@@ -324,6 +324,16 @@ extern "C"{
   }
 }
 
+//Clear all the commands in the ASCII command buffer, to make sure we have room for abort commands.
+void clear_command_queue()
+{
+    if (buflen > 0)
+    {
+        bufindw = (bufindr + 1)%BUFSIZE;
+        buflen = 1;
+    }
+}
+
 //adds an command to the main command buffer
 //thats really done in a non-safe way.
 //needs overworking someday
