@@ -258,6 +258,8 @@ static void lcd_sdcard_stop()
 
     enquecommand_P((PSTR("G28 X Y"))); // move all axis home
     enquecommand_P((PSTR("G0 Z200 F1000")));
+    enquecommand_P((PSTR("M106 S0")));
+
     if(SD_FINISHED_STEPPERRELEASE)
     {
         enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
@@ -826,7 +828,11 @@ void lcd_sdprint_abs()
     force_temp = true;
     forced_M104 = 230.0;
     forced_M109 = 230.0;
+#if MOTHERBOARD == 80
+    forced_M106 = 0.0;
+#else
     forced_M106 = 200.0;
+#endif
     forced_M190 = 90.0;
     lcd_sdcard_menu();
 }
