@@ -928,7 +928,7 @@
 #if LANGUAGE_CHOICE == 6
 
 	// LCD Menu Messages
-	#define WELCOME_MSG MACHINE_NAME			" Готов"
+	#define WELCOME_MSG MACHINE_NAME
 	#define MSG_SD_INSERTED						"Карта вставлена"
 	#define MSG_SD_REMOVED						"Карта извлечена"
 	#define MSG_MAIN							" Меню              \003"
@@ -948,12 +948,21 @@
 	#define MSG_MOVE_AXIS						" Движение по осям  \x7E"
 	#define MSG_PLATE_LEVEL 					"Level Plate"
 	#define MSG_LOAD_SINGLE "Load"
+        #define MSG_PLATE_LEVEL_A        "Level plate Auto "
+        #define MSG_PLATE_LEVEL_M        "Level plate Man. "
+        #define MSG_CHANGE_RIGHT         "Change Right Fil."
+        #define MSG_CHANGE_LEFT          "Change Left Fil. "
+        #define MSG_CHANGE_SINGLE        "Change Filament  "
+        #define MSG_LOAD_SINGLE          "Charge Filament  "
+	#define MSG_PRINT_GCODE          "Use GCode params "
 	#define MSG_UNLOAD_SINGLE "Unload"
 	#define MSG_LOAD_LEFT "Load left"
 	#define MSG_UNLOAD_LEFT "Unload left"
 	#define MSG_LOAD_RIGHT "Load right"
 	#define MSG_UNLOAD_RIGHT "Unload right"
 	#define MSG_SPEED							" Скорость:"
+        #define MSG_HOURS                "Hours"
+        #define MSG_MINUTES              "Minutes"
 	#define MSG_NOZZLE							" \002 Фильера:"
 	#define MSG_NOZZLE1							" \002 Фильера2:"
 	#define MSG_NOZZLE2							" \002 Фильера3:"

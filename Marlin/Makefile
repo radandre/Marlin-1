@@ -37,7 +37,7 @@
 # from the commandline with "make HARDWARE_MOTHERBOARD=71" for example
 
 # This defined the board you are compiling for (see Configuration.h for the options)
-HARDWARE_MOTHERBOARD ?= 34
+HARDWARE_MOTHERBOARD ?= 80
 
 # Arduino source install directory, and version number
 ARDUINO_INSTALL_DIR  ?= ../../../arduino-1.0.1
@@ -90,6 +90,9 @@ else ifeq  ($(HARDWARE_MOTHERBOARD),33)
 HARDWARE_VARIANT ?= arduino
 MCU              ?= atmega2560
 else ifeq  ($(HARDWARE_MOTHERBOARD),34)
+HARDWARE_VARIANT ?= arduino
+MCU              ?= atmega2560
+else ifeq  ($(HARDWARE_MOTHERBOARD),80)
 HARDWARE_VARIANT ?= arduino
 MCU              ?= atmega2560
 

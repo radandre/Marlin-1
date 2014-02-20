@@ -1723,7 +1723,7 @@ void process_commands()
         break;
       }
       if (code_seen('S')) {
-        if ( force_temp ) {
+        if ( force_temp && ( code_value() != 0 ) ) {
           setTargetHotend( forced_M104, tmp_extruder);
         }
         else {
