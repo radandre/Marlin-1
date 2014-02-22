@@ -237,7 +237,11 @@ CXXSRC = WMath.cpp WString.cpp Print.cpp Marlin_main.cpp	\
 	watchdog.cpp memreader.cpp Hysteresis.cpp
 CXXSRC += ultralcd.cpp SPI.cpp Servo.cpp Tone.cpp
 ifeq ($(LIQUID_TWI2), 0)
+ifeq ($(LANGUAGE_CHOICE), 6)
+CXXSRC += LiquidCrystalRus.cpp
+else
 CXXSRC += LiquidCrystal.cpp
+endif
 else
 SRC += twi.c
 CXXSRC += Wire.cpp LiquidTWI2.cpp
@@ -303,6 +307,12 @@ CTUNING = -funsigned-char -funsigned-bitfields -fpack-struct \
 	-DARDUINO=$(ARDUINO_VERSION)
 ifneq ($(HARDWARE_MOTHERBOARD),)
 CTUNING += -DMOTHERBOARD=${HARDWARE_MOTHERBOARD}
+endif
+ifneq ($(LANGUAGE_CHOICE),)
+CTUNING += -DLANGUAGE_CHOICE=${LANGUAGE_CHOICE}
+endif
+ifneq ($(EXTRUDERS),)
+CTUNING += -DEXTRUDERS=${EXTRUDERS}
 endif
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
 CEXTRA = -fno-use-cxa-atexit
