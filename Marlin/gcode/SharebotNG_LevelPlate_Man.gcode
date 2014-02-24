@@ -29,6 +29,7 @@ M71 (Regola vite 4)
 G1 Z5 F3300.0
 G1 X130 Y100
 G1 Z0
+M71 (Verifica viti)
 G1 Z10
 M117 Sharebot NG       
 M84
