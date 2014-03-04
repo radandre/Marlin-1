@@ -65,7 +65,7 @@
 #define CONTROLLERFAN_PIN -1 //Pin used for the fan to cool controller (-1 to disable)
 #define CONTROLLERFAN_SECS 60 //How many seconds, after all motors were disabled, the fan should run
 #if MOTHERBOARD == 80
-  #define  CONTROLLERFAN_PIN 8
+  #define  CONTROLLERFAN_PIN 7
   #define CONTROLLERFAN_SECS 120
 #endif
 

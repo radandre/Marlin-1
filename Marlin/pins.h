@@ -1345,9 +1345,9 @@
 
 #define LED_PIN            13
 
-#define FAN_PIN            7
+#define FAN_PIN            8
 //additional FAN1 PIN (e.g. useful for electronics fan or light on/off) on PIN 8
-#define FAN_PIN2           8 // IO pin. Buffer needed
+#define FAN_PIN2           7 // IO pin. Buffer needed
 //#define FAN_TO_FAN2 // If enabled FAN_PIN2 acts exactly like FAN_PIN
 
 #define PS_ON_PIN          -1
