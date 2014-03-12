@@ -9,8 +9,13 @@
 #include "language.h"
 
 #if LANGUAGE_CHOICE == 7
+#if MACHINE_3D == 1
+#include "sc_3d_level_plate_a.h"
+#include "sc_3d_level_plate_m.h"
+#else
 #include "sc_level_plate_a.h"
 #include "sc_level_plate_m.h"
+#endif
 #elif LANGUAGE_CHOICE == 1 
 #include "sc_level_plate_a_en.h"
 #include "sc_level_plate_m_en.h"
@@ -19,8 +24,14 @@
 #include "sc_level_plate_m.h"
 #endif
 
+#if MACHINE_3D == 1
+#include "sc_3d_change_left.h"
+#include "sc_3d_change_right.h"
+#else
 #include "sc_change_left.h"
 #include "sc_change_right.h"
+#endif
+
 #include "sc_nozzles.h"
 
 static uint8_t *Script[6] = { 0,

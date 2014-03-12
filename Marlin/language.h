@@ -23,12 +23,23 @@
 
 #define PROTOCOL_VERSION "1.0"
 
+//#define MACHINE_3D 1
+
+#if MACHINE_3D == 1
+#define MACHINE_NAME "3D Printer"
+#define FIRMWARE_URL "http://www.google.it"
+#endif
+
 #if MOTHERBOARD == 34 || MOTHERBOARD == 34
-	#define MACHINE_NAME "SHAREBOT NG "
-	#define FIRMWARE_URL "http://www.sharebot.it"
+	#ifndef MACHINE_NAME
+		#define MACHINE_NAME "SHAREBOT NG "
+		#define FIRMWARE_URL "http://www.sharebot.it"
+	#endif
 #elif MOTHERBOARD == 80 || MOTHERBOARD == 80
-	#define MACHINE_NAME "SHAREBOT NG 0.3"
-	#define FIRMWARE_URL "http://www.sharebot.it"
+	#ifndef MACHINE_NAME
+		#define MACHINE_NAME "SHAREBOT NG 0.3"
+		#define FIRMWARE_URL "http://www.sharebot.it"
+	#endif
 #elif MOTHERBOARD == 7 || MOTHERBOARD == 71
 	#define MACHINE_NAME "Ultimaker"
 	#define FIRMWARE_URL "http://firmware.ultimaker.com"
@@ -1230,7 +1241,11 @@
 	#define MSG_HEATING_COMPLETE     "Stampante Calda."
 	#define MSG_BED_HEATING          "Riscaldamento Piatto."
 	#define MSG_BED_DONE             "Piatto Pronto."
+#if MACHINE_3D == 1
+	#define MSG_M115_REPORT          "FIRMWARE_NAME:Marlin V1; FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) " BOARD:" STRINGIFY(MOTHERBOARD) "\n"
+#else
 	#define MSG_M115_REPORT          "FIRMWARE_NAME:Marlin V1; Sharebot FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) " BOARD:" STRINGIFY(MOTHERBOARD) "\n"
+#endif
 	#define MSG_COUNT_X              " Calcola X: "
 	#define MSG_ERR_KILLED           "Stampante Calda. kill() chiamata !!"
 	#define MSG_ERR_STOPPED          "Stampante fermata a causa di errori. Risolvi l'errore e usa M999 per ripartire!. (Reset temperatura. Impostala prima di ripartire)"

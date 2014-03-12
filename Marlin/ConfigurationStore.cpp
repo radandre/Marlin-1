@@ -2,6 +2,7 @@
 #include "planner.h"
 #include "temperature.h"
 #include "ultralcd.h"
+#include "language.h"
 #include "ConfigurationStore.h"
 
 #if EXTRUDERS > 1
@@ -286,7 +287,9 @@ void Config_RetrieveSettings()
             EEPROM_READ_VAR(i, ofdmy );
 #endif
             SERIAL_ECHO_START;
+#if MACHINE_3D != 1
             SERIAL_ECHOLNPGM("Sharebot stored settings retrieved");
+#endif
          }
 
         SERIAL_ECHO_START;
