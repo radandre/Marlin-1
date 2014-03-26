@@ -1116,7 +1116,6 @@ static void homeaxis(int axis) {
 void process_commands()
 {
   unsigned long codenum; //throw away variable
-  char *starpos = NULL;
 #ifdef ENABLE_AUTO_BED_LEVELING
   float x_tmp, y_tmp, z_tmp, real_z;
 #endif
@@ -1545,9 +1544,6 @@ void process_commands()
 
       break;
     case 23: //M23 - Select file
-      starpos = (strchr(strchr_pointer + 4,'*'));
-      if(starpos!=NULL)
-        *(starpos-1)='\0';
       card.openFile(strchr_pointer + 4,true);
       break;
     case 24: //M24 - Start SD print
@@ -1566,12 +1562,6 @@ void process_commands()
       card.getStatus();
       break;
     case 28: //M28 - Start SD write
-      starpos = (strchr(strchr_pointer + 4,'*'));
-      if(starpos != NULL){
-        char* npos = strchr(cmdbuffer[bufindr], 'N');
-        strchr_pointer = strchr(npos,' ') + 1;
-        *(starpos-1) = '\0';
-      }
       card.openFile(strchr_pointer+4,false);
       break;
     case 29: //M29 - Stop SD write
@@ -1581,12 +1571,6 @@ void process_commands()
     case 30: //M30 <filename> Delete File
       if (card.cardOK){
         card.closefile();
-        starpos = (strchr(strchr_pointer + 4,'*'));
-        if(starpos != NULL){
-          char* npos = strchr(cmdbuffer[bufindr], 'N');
-          strchr_pointer = strchr(npos,' ') + 1;
-          *(starpos-1) = '\0';
-        }
         card.removeFile(strchr_pointer + 4);
       }
       break;
@@ -1596,7 +1580,6 @@ void process_commands()
         st_synchronize();
 
       }
-      starpos = (strchr(strchr_pointer + 4,'*')); 
       
       char* namestartpos = (strchr(strchr_pointer + 4,'!'));   //find ! to indicate filename string start.
       if(namestartpos==NULL)
@@ -1606,9 +1589,6 @@ void process_commands()
       else
         namestartpos++; //to skip the '!'
         
-      if(starpos!=NULL)
-        *(starpos-1)='\0';
-            
       bool call_procedure=(code_seen('P'));
       
       if(strchr_pointer>namestartpos) 
@@ -1626,12 +1606,6 @@ void process_commands()
       }
     } break;
     case 928: //M928 - Start SD write
-      starpos = (strchr(strchr_pointer + 5,'*'));
-      if(starpos != NULL){
-        char* npos = strchr(cmdbuffer[bufindr], 'N');
-        strchr_pointer = strchr(npos,' ') + 1;
-        *(starpos-1) = '\0';
-      }
       card.openLogFile(strchr_pointer+5);
       break;
 
@@ -1681,16 +1655,11 @@ void process_commands()
      break;
      case 71: //M71
       {
-        starpos = (strchr(strchr_pointer + 4,'*'));
-        if(starpos!=NULL)
-          *(starpos-1)='\0';
-        
-        starpos = (strchr(strchr_pointer + 4,'('));
-        if(starpos!=NULL) {
-          strchr_pointer = starpos+1;
-          starpos = (strchr(strchr_pointer,')'));
-          if(starpos!=NULL)
-            *(starpos)='\0';
+        if(code_seen(')')) {
+           *(strchr_pointer)='\0';
+        }
+        if(code_seen('(')) {
+          strchr_pointer += 1;
           lcd_setstatus(strchr_pointer);
         }
 
@@ -2108,9 +2077,6 @@ void process_commands()
       SERIAL_PROTOCOLPGM(MSG_M115_REPORT);
       break;
     case 117: // M117 display message
-      starpos = (strchr(strchr_pointer + 5,'*'));
-      if(starpos!=NULL)
-        *(starpos-1)='\0';
       lcd_setstatus(strchr_pointer + 5);
       break;
     case 114: // M114
@@ -2332,8 +2298,8 @@ void process_commands()
     }
     break;
 	
-	case 226: // M226 P<pin number> S<pin state>- Wait until the specified pin reaches the state required
-	{
+   case 226: // M226 P<pin number> S<pin state>- Wait until the specified pin reaches the state required
+   {
       if(code_seen('P')){
         int pin_number = code_value(); // pin number
         int pin_state = -1; // required pin state - default is inverted
