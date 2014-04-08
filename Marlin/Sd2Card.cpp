@@ -373,13 +373,27 @@ bool Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
  * the value zero, false, is returned for failure.
  */
 bool Sd2Card::readBlock(uint32_t blockNumber, uint8_t* dst) {
+  uint8_t retryCnt = 3;
   // use address if not SDHC card
   if (type()!= SD_CARD_TYPE_SDHC) blockNumber <<= 9;
+ retry2:
+  retryCnt--;
   if (cardCommand(CMD17, blockNumber)) {
     error(SD_CARD_ERROR_CMD17);
+    if (retryCnt > 0 ) goto retry;
     goto fail;
   }
-  return readData(dst, 512);
+  if ( !readData(dst,512) ) {
+    if (retryCnt > 0) goto retry;
+    goto fail;
+  }
+  return true;
+
+ retry:
+  chipSelectHigh();
+  cardCommand(CMD12,0);//Try sending a stop command, but ignore the result.
+  errorCode_ = 0;
+  goto retry2;
 
  fail:
   chipSelectHigh();
