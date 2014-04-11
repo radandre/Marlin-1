@@ -2666,7 +2666,8 @@ void process_commands()
           manage_inactivity();
           lcd_update();
         }
-        
+       
+        delay(500); 
         LCD_MESSAGEPGM(MSG_LOAD_SINGLE);
         // Extrude until the button is clicked
         while(!lcd_clicked()){
