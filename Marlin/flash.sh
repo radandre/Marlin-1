@@ -9,4 +9,4 @@ fi
 avrdude -D -C /etc/avrdude.conf \
         -p atmega2560 -P /dev/ttyACM0 -c wiring \
         -b 115200 \
-        -U flash:w:$1:i
+        -U flash:w:$FILE:i
