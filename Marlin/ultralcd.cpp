@@ -8,6 +8,7 @@
 #include "temperature.h"
 #include "stepper.h"
 #include "ConfigurationStore.h"
+#include "planner.h"
 
 int8_t encoderDiff; /* encoderDiff is updated from interrupt context and added to encoderPosition every LCD update */
 
@@ -545,8 +546,23 @@ static void lcd_move_y()
         encoderPosition = 0;
     }
 }
+
+static int8_t next_block_index(int8_t block_index)
+{
+    block_index++;
+    if (block_index == BLOCK_BUFFER_SIZE) { 
+        block_index = 0; 
+    }
+    return(block_index);
+}
+
 static void lcd_move_z()
 {
+    if ( block_buffer_tail == next_block_index(block_buffer_head) )
+    {
+        return;
+    }
+
     if (encoderPosition != 0)
     {
         current_position[Z_AXIS] += float((int)encoderPosition) * move_menu_scale;
