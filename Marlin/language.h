@@ -23,7 +23,7 @@
 
 #define PROTOCOL_VERSION "1.0"
 
-//#define MACHINE_3D 1
+#define MACHINE_3D 1
 
 #if MACHINE_3D == 1
 #define MACHINE_NAME "3D Printer"
