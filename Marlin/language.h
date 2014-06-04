@@ -1237,10 +1237,10 @@
 	#define MSG_M218_INVALID_EXTRUDER "M218 Estrusore non valido "
 	#define MSG_ERR_NO_THERMISTORS   "Nessun Termistore - nessuna temperatura"
 	#define MSG_M109_INVALID_EXTRUDER "M109 Estrusore non valido "
-	#define MSG_HEATING              "Riscaldamento..."
-	#define MSG_HEATING_COMPLETE     "Stampante Calda."
-	#define MSG_BED_HEATING          "Riscaldamento Piatto."
-	#define MSG_BED_DONE             "Piatto Pronto."
+	#define MSG_HEATING              "Riscaldamento...    "
+	#define MSG_HEATING_COMPLETE     "Stampante Calda.    "
+	#define MSG_BED_HEATING          "Riscaldamento Piatto"
+	#define MSG_BED_DONE             "Piatto Pronto.      "
 #if MACHINE_3D == 1
 	#define MSG_M115_REPORT          "FIRMWARE_NAME:Marlin V1; FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) " BOARD:" STRINGIFY(MOTHERBOARD) "\n"
 #else
