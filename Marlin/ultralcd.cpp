@@ -488,8 +488,21 @@ static void lcd_prepare_menu()
 float move_menu_scale;
 static void lcd_move_menu_axis();
 
+static int8_t next_block_index(int8_t block_index)
+{
+    block_index++;
+    if (block_index == BLOCK_BUFFER_SIZE) {
+        block_index = 0;
+    }
+    return(block_index);
+}
+
 static void lcd_move_x()
 {
+    if ( block_buffer_tail == next_block_index(block_buffer_head) ) {
+        return;
+    }
+
     if (encoderPosition != 0)
     {
         current_position[X_AXIS] += float((int)encoderPosition) * move_menu_scale;
@@ -519,6 +532,10 @@ static void lcd_move_x()
 }
 static void lcd_move_y()
 {
+    if ( block_buffer_tail == next_block_index(block_buffer_head) ) {
+        return;
+    }
+
     if (encoderPosition != 0)
     {
         current_position[Y_AXIS] += float((int)encoderPosition) * move_menu_scale;
@@ -547,19 +564,9 @@ static void lcd_move_y()
     }
 }
 
-static int8_t next_block_index(int8_t block_index)
-{
-    block_index++;
-    if (block_index == BLOCK_BUFFER_SIZE) { 
-        block_index = 0; 
-    }
-    return(block_index);
-}
-
 static void lcd_move_z()
 {
-    if ( block_buffer_tail == next_block_index(block_buffer_head) )
-    {
+    if ( block_buffer_tail == next_block_index(block_buffer_head) ) {
         return;
     }
 
@@ -590,8 +597,13 @@ static void lcd_move_z()
         encoderPosition = 0;
     }
 }
+
 static void lcd_move_e()
 {
+    if ( block_buffer_tail == next_block_index(block_buffer_head) ) {
+        return;
+    }
+
     if (encoderPosition != 0)
     {
         current_position[E_AXIS] += float((int)encoderPosition) * move_menu_scale;
