@@ -567,15 +567,16 @@ void get_command()
       {
         comment_mode = false; //for new command
         fromsd[bufindw] = false;
-        if(strchr(cmdbuffer[bufindw], 'N') != NULL)
-        {
+        //if(strchr(cmdbuffer[bufindw], 'N') != NULL)
+        //If the line starts with a line number
+        if ( cmdbuffer[bufindw][0] == 'N' ) {
           strchr_pointer = strchr(cmdbuffer[bufindw], 'N');
           gcode_N = (strtol(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL, 10));
-          if( (gcode_N != gcode_LastN+1) && ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
+          // If the line number is incorrect and there isn't a M110 report the error
+          if( (gcode_N != gcode_LastN+1) && ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) ) {
             SERIAL_ERROR_START;
             SERIAL_ERRORPGM(MSG_ERR_LINE_NO);
             SERIAL_ERRORLN(gcode_LastN);
-            //Serial.println(gcode_N);
             FlushSerialRequestResend();
             serial_count = 0;
             return;
@@ -584,12 +585,10 @@ void get_command()
           // Line number updated with M110
           if (strstr_P(cmdbuffer[bufindw], PSTR("M110")) != NULL ) {
              gcode_LastN = gcode_N;
-          } else 
+          } else  {
           // Checksum required with line numbers and line number updated only with M110
           //if ( ((strstr_P(cmdbuffer[bufindw], PSTR("M110")) == NULL)) && (cmdbuffer[bufindw][0] == 'N') ) {
-          if ( (cmdbuffer[bufindw][0] == 'N') ) {
-            if(strchr(cmdbuffer[bufindw], '*') != NULL)
-            {
+            if(strchr(cmdbuffer[bufindw], '*') != NULL) {
               byte checksum = 0;
               byte count = 0;
               while(cmdbuffer[bufindw][count] != '*') checksum = checksum^cmdbuffer[bufindw][count++];
@@ -604,9 +603,8 @@ void get_command()
                 return;
               }
               //if no errors drop the checksum and continue parsing (check pos-1)
-              //*strchr_pointer=0x00;
-            }
-            else {
+              *strchr_pointer = 0x00;
+            } else {
               SERIAL_ERROR_START;
               SERIAL_ERRORPGM(MSG_ERR_NO_CHECKSUM);
               SERIAL_ERRORLN(gcode_LastN);
@@ -618,13 +616,10 @@ void get_command()
           }
 
           //if no errors, drop the line number and continue
-          if ( cmdbuffer[bufindw][0] == 'N' ) {
-            strchr_pointer=strchr(cmdbuffer[bufindw],' ');
-            if ( strchr_pointer != NULL ) {
-              strcpy( cmdbuffer[bufindw], strchr_pointer+1 );
-            }
+          strchr_pointer=strchr(cmdbuffer[bufindw],' ');
+          if ( strchr_pointer != NULL ) {
+             strcpy( cmdbuffer[bufindw], strchr_pointer+1 );
           }
-          
         }
         else  // if we don't receive 'N' but still see '*'
         {
