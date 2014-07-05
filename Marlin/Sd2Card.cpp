@@ -456,6 +456,7 @@ static uint16_t CRC_CCITT(const uint8_t* data, size_t n) {
   return crc;
 }
 
+//------------------------------------------------------------------------------
 bool Sd2Card::readData(uint8_t* dst, uint16_t count) {
   // wait for start block token
   uint16_t t0 = millis();
