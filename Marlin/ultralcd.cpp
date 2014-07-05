@@ -202,7 +202,6 @@ static void lcd_status_screen()
 #ifdef ULTIPANEL
     if ( (LCD_CLICKED) && !(lcd_LockStatusScreen) )
     {
-        lcd_implementation_init();
         currentMenu = lcd_main_menu;
         encoderPosition = 0;
         lcd_quick_feedback();
@@ -211,8 +210,8 @@ static void lcd_status_screen()
 
 #ifdef ULTIPANEL_FEEDMULTIPLY
     // Dead zone at 100% feedrate
-    if (feedmultiply < 100 && (feedmultiply + int(encoderPosition)) > 100 ||
-            feedmultiply > 100 && (feedmultiply + int(encoderPosition)) < 100)
+    if ((feedmultiply < 100 && (feedmultiply + int(encoderPosition)) > 100) ||
+            (feedmultiply > 100 && (feedmultiply + int(encoderPosition)) < 100))
     {
         encoderPosition = 0;
         feedmultiply = 100;
@@ -277,6 +276,8 @@ static void lcd_sdcard_stop()
         enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
     }
     autotempShutdown();
+
+    cancel_heatup = true;
 }
 
 /* Menu implementation */
@@ -858,9 +859,11 @@ static void lcd_control_menu()
 
 static void lcd_control_temperature_menu()
 {
+#ifdef PIDTEMP
     // set up temp variables - undo the default scaling
     raw_Ki = unscalePID_i(Ki);
     raw_Kd = unscalePID_d(Kd);
+#endif
 
     START_MENU();
     MENU_ITEM(back, MSG_CONTROL, lcd_control_menu);
@@ -1781,16 +1784,20 @@ char *ftostr52(const float &x)
 // grab the PID i value out of the temp variable; scale it; then update the PID driver
 void copy_and_scalePID_i()
 {
+#ifdef PIDTEMP
   Ki = scalePID_i(raw_Ki);
   updatePID();
+#endif
 }
 
 // Callback for after editing PID d value
 // grab the PID d value out of the temp variable; scale it; then update the PID driver
 void copy_and_scalePID_d()
 {
+#ifdef PIDTEMP
   Kd = scalePID_d(raw_Kd);
   updatePID();
+#endif
 }
 
 #endif //ULTRA_LCD
