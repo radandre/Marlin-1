@@ -88,7 +88,7 @@
 	#define WELCOME_MSG MACHINE_NAME
 // Please note these are limited to 17 characters!
 
-	#define WELCOME_MSG MACHINE_NAME " ready."
+	#define WELCOME_MSG MACHINE_NAME
 	#define MSG_SD_INSERTED "Card inserted"
 	#define MSG_SD_REMOVED "Card removed"
 	#define MSG_MAIN "Main"
