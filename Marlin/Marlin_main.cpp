@@ -719,9 +719,51 @@ void get_command()
         //If command was e-stop process now
         if(strcmp(cmdbuffer[bufindw], "M112") == 0)
           kill();
-        
-        bufindw = (bufindw + 1)%BUFSIZE;
-        buflen += 1;
+       
+        // Comando diretto lo processa qui e non lo salva
+        if ( strcmp( cmdbuffer[bufindw], "M613" ) == 0 ) {
+           int level;
+
+           SERIAL_ECHO_START;
+           SERIAL_ECHOPGM("M613");
+           SERIAL_ECHO(lcd_getstatus(&level));
+           SERIAL_ECHO(";");
+           SERIAL_ECHO(level);
+#if EXTRUDERS > 0
+           SERIAL_ECHOPGM(";0:");
+           SERIAL_ECHO(int(degHotend(0) + 0.5 ));
+           SERIAL_ECHOPGM("/");
+           SERIAL_ECHO(int(degTargetHotend(0) + 0.5 ));
+#endif
+#if EXTRUDERS > 1
+           SERIAL_ECHOPGM(";1:");
+           SERIAL_ECHO(int(degHotend(0) + 0.5 ));
+           SERIAL_ECHOPGM("/");
+           SERIAL_ECHO(int(degTargetHotend(0) + 0.5 ));
+#endif
+#if TEMP_SENSOR_BED != 0
+           SERIAL_ECHOPGM(";B:");
+           SERIAL_ECHO(int(degBed() + 0.5 ));
+           SERIAL_ECHOPGM("/");
+           SERIAL_ECHO(int(degTargetBed() + 0.5 ));
+#endif
+
+           if (IS_SD_PRINTING) {
+              SERIAL_ECHOPGM(";");
+              SERIAL_ECHO(itostr3(card.percentDone()));
+           } else {
+              SERIAL_ECHOPGM(";-1");
+           }
+
+           SERIAL_ECHOPGM(";");
+           SERIAL_ECHO(ftostr32(current_position[Z_AXIS]));
+           SERIAL_ECHOPGM(";");
+           SERIAL_ECHOLN(itostr3(feedmultiply));
+           SERIAL_ECHOLNPGM("ok");
+        } else {
+           bufindw = (bufindw + 1)%BUFSIZE;
+           buflen += 1;
+        }
       }
       serial_count = 0; //clear buffer
     }

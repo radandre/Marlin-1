@@ -1438,6 +1438,12 @@ void lcd_update()
     }
 }
 
+const char *lcd_getstatus( int *level )
+{
+   *level=lcd_status_message_level;
+   return lcd_status_message;
+}
+
 void lcd_setstatus(const char* message)
 {
     if (lcd_status_message_level > 0)
