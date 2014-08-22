@@ -154,6 +154,7 @@
 #ifdef Z_DUAL_STEPPER_DRIVERS
   #undef EXTRUDERS
   #define EXTRUDERS 1
+  #define Z2_MAX_PIN 32
 #endif
 
 // Same again but for Y Axis.

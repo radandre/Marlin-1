@@ -166,6 +166,7 @@
 // M503 - print the current settings (from memory not from EEPROM)
 // M540 - Use S[0|1] to enable or disable the stop SD card print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
 // M600 - Pause for filament change X[pos] Y[pos] Z[relative lift] E[initial retract] L[later retract distance for removal]
+// M613 - Return status information immediatly
 // M665 - set delta configurations
 // M666 - set delta endstop adjustment
 // M605 - Set dual x-carriage movement mode: S<mode> [ X<duplication x-offset> R<duplication temp offset> ]
@@ -174,6 +175,7 @@
 // M350 - Set microstepping mode.
 // M351 - Toggle MS1 MS2 pins directly.
 // M928 - Start SD logging (M928 filename.g) - ended by M29
+// M997 - Homing double Z axis
 // M999 - Restart after being stopped by error
 
 //Stepper Movement Variables
@@ -3218,6 +3220,46 @@ void process_commands()
       #endif
     }
     break;
+
+    case 997: // Allineamento degli assi Z manda un impulso su ciscun asse finche' non raggiungere i fine corsa
+      // Direzione +
+#if defined(Z_DUAL_STEPPER_DRIVERS) && defined(Z2_STEP_PIN) && (Z2_STEP_PIN > -1)
+      enable_z();
+      
+      while ( (READ(Z_MAX_PIN)==1) || (READ(Z2_MAX_PIN)==1) ) {
+         int i;
+
+         manage_heater();
+          manage_inactivity();
+          lcd_update();
+         //SERIAL_ECHO("P"); 
+         //SERIAL_ECHO(READ(32));
+         if ( (READ(Z_MAX_PIN))==1 ) {
+           WRITE(Z_DIR_PIN,!INVERT_Z_DIR);
+            for ( i=0; i<400; i++ ) {
+               delay(1);
+               WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN);
+               WRITE(Z_STEP_PIN, INVERT_Z_STEP_PIN);
+            }
+         }
+         
+         manage_heater();
+          manage_inactivity();
+          lcd_update();
+         //SERIAL_ECHO("S");
+         //SERIAL_ECHO(READ(34));
+         if ( (READ(Z2_MAX_PIN))==1 ) {
+           WRITE(Z2_DIR_PIN,!INVERT_Z_DIR);
+            for ( i=0; i<400; i++) {
+               delay(1);
+               WRITE(Z2_STEP_PIN, !INVERT_Z_STEP_PIN);
+               WRITE(Z2_STEP_PIN, INVERT_Z_STEP_PIN);
+            }
+         }
+      }
+#endif
+    break;
+
     case 999: // M999: Restart after being stopped
       Stopped = false;
       lcd_reset_alert_level();
